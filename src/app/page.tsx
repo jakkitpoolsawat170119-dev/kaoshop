@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import ArticleCard from "@/components/ArticleCard";
 import { TrendingUp, Clock, Star } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [topArticles, latestArticles, categories, totalArticles] = await Promise.all([
     prisma.article.findMany({

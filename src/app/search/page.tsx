@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import ArticleCard from "@/components/ArticleCard";
 import { Search } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 import type { Metadata } from "next";
 
 export async function generateMetadata({

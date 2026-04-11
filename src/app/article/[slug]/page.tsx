@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Star, ThumbsUp, ThumbsDown, ExternalLink, Eye } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 import Link from "next/link";
 import type { Metadata } from "next";
 
