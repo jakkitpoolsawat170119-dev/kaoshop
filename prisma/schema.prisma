@@ -1,0 +1,51 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// หมวดหม��่สินค้า
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  image     String?
+  createdAt DateTime  @default(now())
+  articles  Article[]
+}
+
+// บทความรีวิว
+model Article {
+  id             Int       @id @default(autoincrement())
+  title          String
+  slug           String    @unique
+  excerpt        String    // สรุปสั้นๆ
+  content        String    // เนื้อหาบทความ (HTML)
+  featuredImage  String?   // รูปปก
+  rating         Float     @default(0) // คะแนน 0-5
+  pros           String?   // ข้อดี (JSON array)
+  cons           String?   // ข้อเสีย (JSON array)
+  affiliateUrl   String?   // ลิงก์ Shopee Affiliate
+  price          String?   // ราคา
+  productName    String?   // ชื่อสินค้า
+  published      Boolean   @default(false)
+  views          Int       @default(0)
+  clicks         Int       @default(0) // จำนวนคลิก affiliate link
+  categoryId     Int
+  category       Category  @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// API Key สำหรับ n8n
+model ApiKey {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
