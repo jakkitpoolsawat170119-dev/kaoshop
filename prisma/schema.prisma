@@ -32,6 +32,8 @@ model Article {
   affiliateUrl   String?   // ลิงก์ Shopee Affiliate
   price          String?   // ราคา
   productName    String?   // ชื่อสินค้า
+  scoreBreakdown String?   // JSON: {value, quality, performance, design, ease} คะแนน 0-10
+  useCases       String?   // JSON array: ["ทำงาน", "เดินทาง", ...]
   published      Boolean   @default(false)
   views          Int       @default(0)
   clicks         Int       @default(0) // จำนวนคลิก affiliate link

@@ -46,6 +46,7 @@ export default function RootLayout({
     <html
       lang="th"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      style={{ colorScheme: "light" }}
     >
       <body className="min-h-full flex flex-col bg-gray-50">
         <Header />

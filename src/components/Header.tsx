@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 export default async function Header() {
   const categories = await prisma.category.findMany({
     orderBy: { name: "asc" },
+    take: 8,
   });
 
   return (
