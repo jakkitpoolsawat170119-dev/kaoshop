@@ -33,7 +33,7 @@ export default function ArticleCard({ article, rank }: ArticleCardProps) {
     <Link href={`/article/${article.slug}`} className="group block">
       <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
         {/* Image */}
-        <div className="relative aspect-video bg-gray-100">
+        <div className="relative aspect-video bg-gray-100 overflow-hidden">
           {article.featuredImage?.startsWith("http") ? (
             <Image
               src={article.featuredImage}
@@ -47,23 +47,24 @@ export default function ArticleCard({ article, rank }: ArticleCardProps) {
               KaoShop
             </div>
           )}
-          {rank && (
-            <div className="absolute top-3 left-3 bg-orange-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">
-              #{rank}
-            </div>
-          )}
-          <div className="absolute top-3 right-3 bg-white/90 text-xs px-2 py-1 rounded-full text-gray-600">
-            {article.category.name}
-          </div>
-          {/* Score Badge */}
-          <div className={`absolute bottom-3 left-3 ${color.text} bg-white/95 rounded-lg px-2 py-1 flex items-center gap-1 shadow-sm`}>
-            <span className="text-lg font-black leading-none">{score10.toFixed(1)}</span>
-            <span className="text-xs text-gray-400">/10</span>
-          </div>
         </div>
 
         {/* Content */}
         <div className="p-4">
+          {/* Rank + Category row */}
+          <div className="flex items-center gap-2 mb-2">
+            {rank && (
+              <span className="bg-orange-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">
+                #{rank}
+              </span>
+            )}
+            <span className="bg-gray-100 text-xs px-2 py-0.5 rounded-full text-gray-600">
+              {article.category.name}
+            </span>
+            <span className={`ml-auto ${color.text} font-black text-sm`}>
+              {score10.toFixed(1)}<span className="text-xs text-gray-400 font-normal">/10</span>
+            </span>
+          </div>
           <h3 className="font-semibold text-gray-900 group-hover:text-orange-500 transition-colors line-clamp-2 mb-1">
             {article.title}
           </h3>
