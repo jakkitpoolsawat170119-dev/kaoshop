@@ -41,6 +41,7 @@ export async function PUT(
       ...(body.excerpt !== undefined && { excerpt: body.excerpt }),
       ...(body.content !== undefined && { content: body.content }),
       ...(body.featuredImage !== undefined && { featuredImage: body.featuredImage }),
+      ...(body.images !== undefined && { images: body.images ? JSON.stringify(body.images) : null }),
       ...(body.rating !== undefined && { rating: parseFloat(body.rating) }),
       ...(body.pros !== undefined && { pros: body.pros }),
       ...(body.cons !== undefined && { cons: body.cons }),

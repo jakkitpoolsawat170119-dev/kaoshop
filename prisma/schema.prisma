@@ -26,6 +26,7 @@ model Article {
   excerpt        String    // สรุปสั้นๆ
   content        String    // เนื้อหาบทความ (HTML)
   featuredImage  String?   // รูปปก
+  images         String?   // JSON array ของรูปสินค้าทั้งหมด (Cloudinary URLs)
   rating         Float     @default(0) // คะแนน 0-5
   pros           String?   // ข้อดี (JSON array)
   cons           String?   // ข้อเสีย (JSON array)
