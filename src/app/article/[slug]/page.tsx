@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import ProductImageGallery from "@/components/ProductImageGallery";
 
 export async function generateMetadata({
   params,
@@ -157,22 +158,14 @@ export default async function ArticlePage({
 
         {/* Image + Score side by side */}
         <div className="md:flex">
-          {/* Product Image */}
-          <div className="md:w-2/5 bg-gray-50 flex items-center justify-center p-6 min-h-64 overflow-hidden">
-            {article.featuredImage?.startsWith("http") ? (
-              <div className="relative w-full aspect-square max-w-[240px] mx-auto transition-transform duration-300 ease-in-out hover:scale-110 cursor-zoom-in">
-                <Image
-                  src={article.featuredImage}
-                  alt={article.productName || article.title}
-                  fill
-                  className="object-contain"
-                  sizes="240px"
-                  priority
-                />
-              </div>
-            ) : (
-              <div className="text-gray-300 text-4xl font-bold">KaoShop</div>
-            )}
+          {/* Product Image Gallery */}
+          <div className="md:w-2/5 bg-gray-50 flex items-center justify-center p-4 min-h-64">
+            <ProductImageGallery
+              featuredImage={article.featuredImage}
+              images={(article as any).images ?? null}
+              productName={article.productName}
+              title={article.title}
+            />
           </div>
 
           {/* Score Section */}
