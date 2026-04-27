@@ -58,38 +58,48 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // สร้างหรือหา category
-  const category = await prisma.category.upsert({
-    where: { slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-") },
-    update: {},
-    create: {
-      name: categoryName,
-      slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-"),
-    },
-  });
+  try {
+    // สร้างหรือหา category
+    const category = await prisma.category.upsert({
+      where: { slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-") },
+      update: {},
+      create: {
+        name: categoryName,
+        slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-"),
+      },
+    });
 
-  // สร้างบทความ
-  const article = await prisma.article.create({
-    data: {
-      title,
-      slug,
-      excerpt: excerpt || title,
-      content,
-      featuredImage: featuredImage || null,
-      images: images ? JSON.stringify(images) : null,
-      rating: rating || 0,
-      pros: pros ? JSON.stringify(pros) : null,
-      cons: cons ? JSON.stringify(cons) : null,
-      scoreBreakdown: scoreBreakdown ? JSON.stringify(scoreBreakdown) : null,
-      useCases: useCases ? JSON.stringify(useCases) : null,
-      affiliateUrl: affiliateUrl || null,
-      price: price || null,
-      productName: productName || null,
-      published,
-      categoryId: category.id,
-    },
-    include: { category: true },
-  });
+    // สร้างบทความ
+    const article = await prisma.article.create({
+      data: {
+        title,
+        slug,
+        excerpt: excerpt || title,
+        content,
+        featuredImage: featuredImage || null,
+        images: images ? JSON.stringify(images) : null,
+        rating: rating || 0,
+        pros: pros ? JSON.stringify(pros) : null,
+        cons: cons ? JSON.stringify(cons) : null,
+        scoreBreakdown: scoreBreakdown ? JSON.stringify(scoreBreakdown) : null,
+        useCases: useCases ? JSON.stringify(useCases) : null,
+        affiliateUrl: affiliateUrl || null,
+        price: price || null,
+        productName: productName || null,
+        published,
+        categoryId: category.id,
+      },
+      include: { category: true },
+    });
 
-  return Response.json(article, { status: 201 });
+    return Response.json(article, { status: 201 });
+  } catch (e: any) {
+    console.error("[POST /api/articles] Error:", e);
+    const msg = e?.message || "Unknown error";
+    // slug ซ้ำ
+    if (msg.includes("UNIQUE") || msg.includes("unique")) {
+      return Response.json({ error: "Slug already exists", detail: msg }, { status: 409 });
+    }
+    return Response.json({ error: "Internal server error", detail: msg }, { status: 500 });
+  }
 }
