@@ -59,15 +59,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // สร้างหรือหา category
-    const category = await prisma.category.upsert({
-      where: { slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-") },
-      update: {},
-      create: {
-        name: categoryName,
-        slug: categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-"),
-      },
+    // สร้างหรือหา category — ค้นหาด้วย name ก่อน (name เป็น unique)
+    const resolvedSlug = categorySlug || categoryName.toLowerCase().replace(/\s+/g, "-");
+    let category = await prisma.category.findFirst({
+      where: { OR: [{ name: categoryName }, { slug: resolvedSlug }] },
     });
+    if (!category) {
+      category = await prisma.category.create({
+        data: { name: categoryName, slug: resolvedSlug },
+      });
+    }
 
     // ป้องกัน slug ซ้ำ — ถ้าซ้ำให้ต่อท้ายด้วย random
     let finalSlug = slug;
