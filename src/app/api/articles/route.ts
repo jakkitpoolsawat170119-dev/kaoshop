@@ -69,11 +69,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // ป้องกัน slug ซ้ำ — ถ้าซ้ำให้ต่อท้ายด้วย random
+    let finalSlug = slug;
+    const existing = await prisma.article.findUnique({ where: { slug } });
+    if (existing) {
+      finalSlug = `${slug}-${Math.random().toString(36).slice(2, 7)}`;
+    }
+
     // สร้างบทความ
     const article = await prisma.article.create({
       data: {
         title,
-        slug,
+        slug: finalSlug,
         excerpt: excerpt || title,
         content,
         featuredImage: featuredImage || null,
@@ -96,10 +103,6 @@ export async function POST(request: NextRequest) {
   } catch (e: any) {
     console.error("[POST /api/articles] Error:", e);
     const msg = e?.message || "Unknown error";
-    // slug ซ้ำ
-    if (msg.includes("UNIQUE") || msg.includes("unique")) {
-      return Response.json({ error: "Slug already exists", detail: msg }, { status: 409 });
-    }
     return Response.json({ error: "Internal server error", detail: msg }, { status: 500 });
   }
 }
