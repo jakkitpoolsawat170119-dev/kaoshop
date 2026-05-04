@@ -50,7 +50,7 @@ export default async function Home() {
       {/* Categories */}
       {categories.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
             <Star size={20} className="text-orange-500" />
             หมวดหมู่สินค้า
           </h2>
@@ -59,10 +59,10 @@ export default async function Home() {
               <a
                 key={cat.id}
                 href={`/category/${cat.slug}`}
-                className="bg-white rounded-xl p-4 text-center hover:shadow-md transition-shadow border border-gray-100"
+                className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700"
               >
-                <p className="font-medium text-gray-900">{cat.name}</p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="font-medium text-gray-900 dark:text-gray-100">{cat.name}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   {cat._count.articles} บทความ
                 </p>
               </a>
@@ -74,7 +74,7 @@ export default async function Home() {
       {/* Top Articles */}
       {topArticles.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
             <TrendingUp size={20} className="text-orange-500" />
             รีวิวยอดนิยม
           </h2>
@@ -93,7 +93,7 @@ export default async function Home() {
       {/* Latest Articles */}
       {latestArticles.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
             <Clock size={20} className="text-orange-500" />
             รีวิวล่าสุด
           </h2>

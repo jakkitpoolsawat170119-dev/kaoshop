@@ -133,13 +133,13 @@ export default async function ArticlePage({
 
       {/* Title & Meta — outside card like my-best */}
       <div className="mb-6">
-        <span className="text-xs font-semibold text-green-600 bg-green-50 border border-green-200 px-3 py-1 rounded-full">
+        <span className="text-xs font-semibold text-green-600 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 px-3 py-1 rounded-full">
           {article.category.name}
         </span>
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mt-3 mb-2 leading-snug">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-3 mb-2 leading-snug">
           {article.title}
         </h1>
-        <p className="text-gray-500 text-sm mb-3">{article.excerpt}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">{article.excerpt}</p>
         <div className="flex items-center gap-4 text-xs text-gray-400">
           <div className="flex items-center gap-1">
             <Eye size={12} />
@@ -154,12 +154,12 @@ export default async function ArticlePage({
       </div>
 
       {/* Product Card — my-best style */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden mb-6">
 
         {/* Image + Score side by side */}
         <div className="md:flex">
           {/* Product Image Gallery */}
-          <div className="md:w-2/5 bg-gray-50 flex items-center justify-center p-4 min-h-64">
+          <div className="md:w-2/5 bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 min-h-64">
             <ProductImageGallery
               featuredImage={article.featuredImage}
               images={(article as any).images ?? null}
@@ -169,25 +169,25 @@ export default async function ArticlePage({
           </div>
 
           {/* Score Section */}
-          <div className="md:w-3/5 p-6 border-t md:border-t-0 md:border-l border-gray-100">
+          <div className="md:w-3/5 p-6 border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700">
             {/* Product Name */}
             {article.productName && (
-              <p className="text-sm text-gray-500 mb-1">{article.productName}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{article.productName}</p>
             )}
 
             {/* Overall Score Circle */}
             <div className="flex items-center gap-4 mb-5">
               <div className={`w-20 h-20 rounded-full flex flex-col items-center justify-center border-4 shrink-0
-                ${overallColor.text === "text-green-600" ? "border-green-500 bg-green-50" :
-                  overallColor.text === "text-yellow-600" ? "border-yellow-400 bg-yellow-50" :
-                  "border-red-400 bg-red-50"}`}>
+                ${overallColor.text === "text-green-600" ? "border-green-500 bg-green-50 dark:bg-green-900/30" :
+                  overallColor.text === "text-yellow-600" ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-900/30" :
+                  "border-red-400 bg-red-50 dark:bg-red-900/30"}`}>
                 <span className={`text-2xl font-black leading-none ${overallColor.text}`}>
                   {(article.rating * 2).toFixed(1)}
                 </span>
                 <span className="text-xs text-gray-400">/10</span>
               </div>
               <div>
-                <p className="font-bold text-gray-800 text-sm">คะแนนรวม KaoShop</p>
+                <p className="font-bold text-gray-800 dark:text-gray-200 text-sm">คะแนนรวม KaoShop</p>
                 <div className="flex items-center gap-0.5 mt-1">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star key={i} size={14}
@@ -217,13 +217,13 @@ export default async function ArticlePage({
                   return (
                     <div key={key}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-gray-600">
-                          <span className="text-gray-400 mr-1">{idx + 1}.</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-300">
+                          <span className="text-gray-400 dark:text-gray-500 mr-1">{idx + 1}.</span>
                           {scoreLabels[key]}
                         </span>
                         <span className={`text-xs font-bold ${color.text}`}>{val}/10</span>
                       </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
                         <div
                           className={`${color.bar} h-2 rounded-full`}
                           style={{ width: `${val * 10}%` }}
@@ -238,11 +238,11 @@ export default async function ArticlePage({
         </div>
 
         {/* Price + CTA — full width bottom bar */}
-        <div className="border-t border-gray-100 px-6 py-4 flex items-center justify-between bg-gray-50">
+        <div className="border-t border-gray-100 dark:border-gray-700 px-6 py-4 flex items-center justify-between bg-gray-50 dark:bg-gray-900/50">
           <div>
             <p className="text-xs text-gray-400">ราคาโดยประมาณ</p>
             {article.price ? (
-              <p className="text-2xl font-black text-gray-900">{article.price} <span className="text-base font-normal text-gray-500">บาท</span></p>
+              <p className="text-2xl font-black text-gray-900 dark:text-gray-100">{article.price} <span className="text-base font-normal text-gray-500">บาท</span></p>
             ) : (
               <p className="text-sm text-gray-500">ดูราคาที่ Shopee</p>
             )}
@@ -265,8 +265,8 @@ export default async function ArticlePage({
       {(pros.length > 0 || cons.length > 0) && (
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           {pros.length > 0 && (
-            <div className="bg-white rounded-2xl border border-green-200 p-5">
-              <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-green-200 dark:border-green-900 p-5">
+              <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
                 <span className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shrink-0">
                   <ThumbsUp size={12} className="text-white" />
                 </span>
@@ -274,7 +274,7 @@ export default async function ArticlePage({
               </h3>
               <ul className="space-y-2.5">
                 {pros.map((pro: string, i: number) => (
-                  <li key={i} className="text-sm text-gray-700 flex items-start gap-2">
+                  <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
                     <span className="text-green-500 font-bold mt-0.5 shrink-0">✓</span>
                     {pro}
                   </li>
@@ -283,8 +283,8 @@ export default async function ArticlePage({
             </div>
           )}
           {cons.length > 0 && (
-            <div className="bg-white rounded-2xl border border-red-200 p-5">
-              <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-red-200 dark:border-red-900 p-5">
+              <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
                 <span className="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center shrink-0">
                   <ThumbsDown size={12} className="text-white" />
                 </span>
@@ -292,7 +292,7 @@ export default async function ArticlePage({
               </h3>
               <ul className="space-y-2.5">
                 {cons.map((con: string, i: number) => (
-                  <li key={i} className="text-sm text-gray-700 flex items-start gap-2">
+                  <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
                     <span className="text-red-400 font-bold mt-0.5 shrink-0">✗</span>
                     {con}
                   </li>
@@ -304,25 +304,25 @@ export default async function ArticlePage({
       )}
 
       {/* Review Content */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 md:p-8 mb-6">
         <div
-          className="prose prose-gray max-w-none text-sm leading-relaxed
-            [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-gray-800 [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:pb-2 [&_h2]:border-b [&_h2]:border-gray-100
-            [&_.quick-take]:bg-green-50 [&_.quick-take]:border-l-4 [&_.quick-take]:border-green-400
+          className="prose prose-gray dark:prose-invert max-w-none text-sm leading-relaxed text-gray-700 dark:text-gray-300
+            [&_h2]:text-lg [&_h2]:font-bold [&_h2]:text-gray-800 dark:[&_h2]:text-gray-200 [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:pb-2 [&_h2]:border-b [&_h2]:border-gray-100 dark:[&_h2]:border-gray-700
+            [&_.quick-take]:bg-green-50 dark:[&_.quick-take]:bg-green-900/30 [&_.quick-take]:border-l-4 [&_.quick-take]:border-green-400
             [&_.quick-take]:px-4 [&_.quick-take]:py-3 [&_.quick-take]:rounded-r-lg [&_.quick-take]:mb-6
-            [&_.quick-take]:text-green-900 [&_.quick-take]:text-sm"
+            [&_.quick-take]:text-green-900 dark:[&_.quick-take]:text-green-300 [&_.quick-take]:text-sm"
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
       </div>
 
       {/* Final CTA — my-best style, green, prominent */}
       {article.affiliateUrl && (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 text-center mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 text-center mb-8">
           {article.productName && (
-            <p className="font-semibold text-gray-800 mb-1">{article.productName}</p>
+            <p className="font-semibold text-gray-800 dark:text-gray-200 mb-1">{article.productName}</p>
           )}
           {article.price && (
-            <p className="text-3xl font-black text-gray-900 mb-4">
+            <p className="text-3xl font-black text-gray-900 dark:text-gray-100 mb-4">
               {article.price} <span className="text-lg font-normal text-gray-500">บาท</span>
             </p>
           )}
@@ -342,7 +342,7 @@ export default async function ArticlePage({
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
             <span className="w-1 h-5 bg-green-500 rounded-full inline-block" />
             สินค้าที่เกี่ยวข้อง
           </h2>
@@ -351,9 +351,9 @@ export default async function ArticlePage({
               <Link
                 key={related.id}
                 href={`/article/${related.slug}`}
-                className="bg-white rounded-xl p-4 hover:shadow-md transition-shadow border border-gray-100 group"
+                className="bg-white dark:bg-gray-800 rounded-xl p-4 hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700 group"
               >
-                <h3 className="font-medium text-gray-900 group-hover:text-green-600 line-clamp-2 mb-2 text-sm">
+                <h3 className="font-medium text-gray-900 dark:text-gray-100 group-hover:text-green-600 line-clamp-2 mb-2 text-sm">
                   {related.title}
                 </h3>
                 <div className="flex items-center justify-between">
