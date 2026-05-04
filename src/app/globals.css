@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-/* Dark mode ใช้ class strategy — toggle โดย JavaScript */
-@variant dark (&:where(.dark, .dark *));
+/* Dark mode ใช้ class strategy — next-themes จัดการ .dark บน <html> */
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
