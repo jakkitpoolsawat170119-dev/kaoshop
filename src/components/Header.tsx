@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import DarkModeToggle from "@/components/DarkModeToggle";
 
 export default async function Header() {
   const categories = await prisma.category.findMany({
@@ -9,7 +10,7 @@ export default async function Header() {
   });
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between h-16">
@@ -34,12 +35,15 @@ export default async function Header() {
             </form>
           </div>
 
-          <Link
-            href="/admin"
-            className="text-sm text-gray-500 hover:text-orange-500"
-          >
-            Admin
-          </Link>
+          <div className="flex items-center gap-2">
+            <DarkModeToggle />
+            <Link
+              href="/admin"
+              className="text-sm text-gray-500 dark:text-gray-400 hover:text-orange-500"
+            >
+              Admin
+            </Link>
+          </div>
         </div>
 
         {/* Categories nav */}
@@ -47,7 +51,7 @@ export default async function Header() {
           <nav className="flex gap-6 overflow-x-auto pb-3 text-sm">
             <Link
               href="/"
-              className="text-gray-600 hover:text-orange-500 whitespace-nowrap"
+              className="text-gray-600 dark:text-gray-300 hover:text-orange-500 whitespace-nowrap"
             >
               ทั้งหมด
             </Link>
@@ -55,7 +59,7 @@ export default async function Header() {
               <Link
                 key={cat.id}
                 href={`/category/${cat.slug}`}
-                className="text-gray-600 hover:text-orange-500 whitespace-nowrap"
+                className="text-gray-600 dark:text-gray-300 hover:text-orange-500 whitespace-nowrap"
               >
                 {cat.name}
               </Link>

@@ -31,7 +31,7 @@ export default function ArticleCard({ article, rank }: ArticleCardProps) {
 
   return (
     <Link href={`/article/${article.slug}`} className="group block">
-      <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100 dark:border-gray-700">
         {/* Image */}
         <div className="relative aspect-video bg-gray-100 overflow-hidden">
           {article.featuredImage?.startsWith("http") ? (
@@ -58,23 +58,23 @@ export default function ArticleCard({ article, rank }: ArticleCardProps) {
                 #{rank}
               </span>
             )}
-            <span className="bg-gray-100 text-xs px-2 py-0.5 rounded-full text-gray-600">
+            <span className="bg-gray-100 dark:bg-gray-700 text-xs px-2 py-0.5 rounded-full text-gray-600 dark:text-gray-300">
               {article.category.name}
             </span>
             <span className={`ml-auto ${color.text} font-black text-sm`}>
               {score10.toFixed(1)}<span className="text-xs text-gray-400 font-normal">/10</span>
             </span>
           </div>
-          <h3 className="font-semibold text-gray-900 group-hover:text-orange-500 transition-colors line-clamp-2 mb-1">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-orange-500 transition-colors line-clamp-2 mb-1">
             {article.title}
           </h3>
-          <p className="text-xs text-gray-500 line-clamp-2 mb-3">
+          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
             {article.excerpt}
           </p>
 
           {/* Score Bar */}
           <div className="mb-3">
-            <div className="w-full bg-gray-100 rounded-full h-1.5">
+            <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-1.5">
               <div
                 className={`${color.bar} h-1.5 rounded-full`}
                 style={{ width: `${score10 * 10}%` }}
@@ -83,7 +83,7 @@ export default function ArticleCard({ article, rank }: ArticleCardProps) {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 text-xs text-gray-400">
+            <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
               <Eye size={11} />
               <span>{article.views.toLocaleString()} views</span>
             </div>
