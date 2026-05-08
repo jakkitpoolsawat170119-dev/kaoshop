@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import MobileMenu from "@/components/MobileMenu";
 
 export default async function Header() {
   const categories = await prisma.category.findMany({
@@ -39,10 +40,11 @@ export default async function Header() {
             <DarkModeToggle />
             <Link
               href="/admin"
-              className="text-sm text-gray-500 dark:text-gray-400 hover:text-orange-500"
+              className="hidden md:block text-sm text-gray-500 dark:text-gray-400 hover:text-orange-500"
             >
               Admin
             </Link>
+            <MobileMenu categories={categories} />
           </div>
         </div>
 
