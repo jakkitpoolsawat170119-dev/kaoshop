@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu, X, Search } from "lucide-react";
 
 interface Category {
-  id: string;
+  id: number;
   name: string;
   slug: string;
 }
