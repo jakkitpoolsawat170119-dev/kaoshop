@@ -2,6 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { validateApiKey } from "@/lib/auth";
 import { type NextRequest } from "next/server";
 
+function sanitizeSlug(raw: string): string {
+  const ascii = raw.replace(/[^\x00-\x7F]/g, "").replace(/[^a-z0-9-]/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  return ascii.length >= 4 ? ascii.toLowerCase() : `article-${raw.replace(/[^0-9]/g, "") || Date.now()}`;
+}
+
 // GET: ดึงบทความทั้งหมด
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
