@@ -2,9 +2,9 @@ import Link from "next/link";
 
 // TODO: ใส่ link จริงเมื่อสร้างช่องทางแล้ว
 const SOCIAL_LINKS = {
-  facebook: "https://facebook.com/kaoshop",
-  line: "https://line.me/ti/p/@kaoshop",
-  tiktok: "https://tiktok.com/@kaoshop",
+  facebook: "https://www.facebook.com/profile.php?id=61589524837023",
+  tiktok: "https://www.tiktok.com/@kaoshop.review",
+  line: "https://line.me/R/ti/p/@165vztml",
 };
 
 function FacebookIcon() {
