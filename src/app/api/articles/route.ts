@@ -76,8 +76,8 @@ export async function POST(request: NextRequest) {
     }
 
     // ป้องกัน slug ซ้ำ — ถ้าซ้ำให้ต่อท้ายด้วย random
-    let finalSlug = slug;
-    const existing = await prisma.article.findUnique({ where: { slug } });
+   let finalSlug = sanitizeSlug(slug);
+    const existing = await prisma.article.findUnique({ where: { slug: finalSlug } });
     if (existing) {
       finalSlug = `${slug}-${Math.random().toString(36).slice(2, 7)}`;
     }
