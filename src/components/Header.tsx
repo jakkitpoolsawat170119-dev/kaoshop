@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import DarkModeToggle from "@/components/DarkModeToggle";
@@ -15,8 +16,15 @@ export default async function Header() {
       <div className="max-w-7xl mx-auto px-4">
         {/* Top bar */}
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-2xl font-bold text-orange-500">
-            KaoShop
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/Screenshot 2569-05-14 at 10.54.17.png"
+              alt="KaoShop"
+              width={48}
+              height={48}
+              className="rounded-full object-cover"
+              priority
+            />
           </Link>
 
           <div className="hidden md:flex flex-1 max-w-xl mx-8">
