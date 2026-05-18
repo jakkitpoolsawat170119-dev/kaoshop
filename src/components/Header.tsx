@@ -58,7 +58,7 @@ export default async function Header() {
                 priority
               />
             </Link>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-3">
               <a
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
