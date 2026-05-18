@@ -63,7 +63,7 @@ export default async function Header() {
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-blue-600 hover:text-white text-gray-500 p-1.5 rounded-full transition-colors"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-blue-600 hover:text-white text-gray-500 p-2.5 rounded-full transition-colors"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
@@ -72,7 +72,7 @@ export default async function Header() {
                 href={SOCIAL_LINKS.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-800 hover:text-white text-gray-500 p-1.5 rounded-full transition-colors"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-gray-800 hover:text-white text-gray-500 p-2.5 rounded-full transition-colors"
                 aria-label="TikTok"
               >
                 <TikTokIcon />
@@ -81,7 +81,7 @@ export default async function Header() {
                 href={SOCIAL_LINKS.line}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-100 dark:bg-gray-700 hover:bg-green-500 hover:text-white text-gray-500 p-1.5 rounded-full transition-colors"
+                className="bg-gray-100 dark:bg-gray-700 hover:bg-green-500 hover:text-white text-gray-500 p-2.5 rounded-full transition-colors"
                 aria-label="Line"
               >
                 <LineIcon />
