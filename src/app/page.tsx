@@ -1,8 +1,73 @@
 import { prisma } from "@/lib/prisma";
 import ArticleCard from "@/components/ArticleCard";
-import { TrendingUp, Clock, Star, Smartphone, Heart, Headphones, BookOpen, Trophy, PawPrint, Gamepad2, Shirt, UtensilsCrossed, Plane, ShoppingBag } from "lucide-react";
+import { TrendingUp, Clock, Star } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+function ElectronicsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-blue-500">
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+    </svg>
+  );
+}
+
+function HealthIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-red-500">
+      <path d="M12 21C12 21 3 14 3 8a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6-9 13-9 13z" />
+    </svg>
+  );
+}
+
+function HeadphonesIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-purple-500">
+      <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+      <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z" />
+      <path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+    </svg>
+  );
+}
+
+function BooksIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-yellow-500">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  );
+}
+
+function SportsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-green-500">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+      <path d="M2 12h20" />
+    </svg>
+  );
+}
+
+function DefaultCategoryIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-8 h-8 text-orange-500">
+      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+  );
+}
+
+function getCategoryIcon(slug: string) {
+  if (slug === "electronics") return <ElectronicsIcon />;
+  if (slug === "health") return <HealthIcon />;
+  if (slug === "headphones") return <HeadphonesIcon />;
+  if (slug === "books") return <BooksIcon />;
+  if (slug === "sports") return <SportsIcon />;
+  return <DefaultCategoryIcon />;
+}
 
 export default async function Home() {
   const [topArticles, latestArticles, categories, totalArticles] = await Promise.all([
@@ -61,7 +126,8 @@ export default async function Home() {
                 href={`/category/${cat.slug}`}
                 className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center hover:shadow-md transition-shadow border border-gray-100 dark:border-gray-700"
               >
-                <p className="font-medium text-gray-900 dark:text-gray-100">{cat.name}</p>
+                <div className="flex justify-center mb-2">{getCategoryIcon(cat.slug)}</div>
+                <p className="font-medium text-gray-900 dark:text-gray-100 text-sm">{cat.name}</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   {cat._count.articles} บทความ
                 </p>
@@ -80,11 +146,7 @@ export default async function Home() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {topArticles.map((article, index) => (
-              <ArticleCard
-                key={article.id}
-                article={article}
-                rank={index + 1}
-              />
+              <ArticleCard key={article.id} article={article} rank={index + 1} />
             ))}
           </div>
         </section>
@@ -109,12 +171,9 @@ export default async function Home() {
       {topArticles.length === 0 && latestArticles.length === 0 && (
         <section className="text-center py-20">
           <div className="text-6xl mb-4">📝</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            ยังไม่มีบทความรีวิว
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">ยังไม่มีบทความรีวิว</h2>
           <p className="text-gray-500 mb-6">
-            เชื่อมต่อ n8n เพื่อสร้างบทความรีวิวอัตโนมัติ หรือเพิ่มบทความผ่าน
-            Admin Panel
+            เชื่อมต่อ n8n เพื่อสร้างบทความรีวิวอัตโนมัติ หรือเพิ่มบทความผ่าน Admin Panel
           </p>
           <a
             href="/admin"
