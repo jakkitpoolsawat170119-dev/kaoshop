@@ -52,8 +52,8 @@ export default async function Header() {
               <Image
                 src="/Screenshot 2569-05-14 at 10.54.17.png"
                 alt="KaoShop"
-                width={56}
-                height={56}
+                width={72}
+                height={72}
                 className="rounded-full object-cover"
                 priority
               />
