@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import ArticleCard from "@/components/ArticleCard";
-import { TrendingUp, Clock, Star } from "lucide-react";
+import { TrendingUp, Clock, Star, Smartphone, Heart, Headphones, BookOpen, Trophy, PawPrint, Gamepad2, Shirt, UtensilsCrossed, Plane, ShoppingBag } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
