@@ -106,7 +106,7 @@ export default async function Header() {
             </form>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-5">
             <DarkModeToggle />
             <Link
               href="/admin"
