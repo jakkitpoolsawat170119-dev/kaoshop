@@ -120,7 +120,7 @@ export default async function Header() {
 
         {/* Categories nav */}
         {categories.length > 0 && (
-          <nav className="flex gap-6 overflow-x-auto pb-3 text-sm">
+          <nav className="flex gap-6 overflow-x-auto pt-3 pb-3 text-sm">
             <Link
               href="/"
               className="text-gray-600 dark:text-gray-300 hover:text-orange-500 whitespace-nowrap"
