@@ -52,3 +52,13 @@ model ApiKey {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
 }
+
+model Coupon {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  description String
+  discount    String
+  expiresAt   DateTime?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+}
