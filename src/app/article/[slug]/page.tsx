@@ -1,3 +1,4 @@
+import { Star, ThumbsUp, ThumbsDown, ExternalLink, Eye, ShoppingCart, Ticket } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Star, ThumbsUp, ThumbsDown, ExternalLink, Eye, ShoppingCart } from "lucide-react";
@@ -7,6 +8,26 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import ProductImageGallery from "@/components/ProductImageGallery";
+
+async function CouponsInline() {
+  let coupons: { id: number; code: string; description: string; discount: string }[] = [];
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || "https://kaoshop-omega.vercel.app"}/api/coupons`, { cache: "no-store" });
+    if (res.ok) coupons = (await res.json()).slice(0, 3);
+  } catch {}
+  if (coupons.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      {coupons.map((c) => (
+        <div key={c.id} className="flex items-center gap-3">
+          <span className="font-black text-orange-500 text-sm tracking-wider bg-white dark:bg-gray-800 px-3 py-1 rounded border border-orange-200 dark:border-orange-700 shrink-0">{c.code}</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">{c.description}</span>
+          <span className="text-xs font-semibold text-green-600 shrink-0">{c.discount}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export async function generateMetadata({
   params,
