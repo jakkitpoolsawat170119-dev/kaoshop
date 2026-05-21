@@ -72,44 +72,6 @@ function getCategoryIcon(slug: string) {
 async function CouponsSection() {
   let coupons: { id: number; code: string; description: string; discount: string; expiresAt: string | null }[] = [];
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/api/coupons`, { cache: "no-store" });
-    if (res.ok) coupons = await res.json();
-  } catch {}
-
-  if (coupons.length === 0) return null;
-
-  return (
-    <section className="mb-12">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-        <Ticket size={20} className="text-orange-500" />
-        โค้ดส่วนลด Shopee
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {coupons.map((c) => (
-          <div key={c.id} className="bg-white dark:bg-gray-800 border border-dashed border-orange-300 dark:border-orange-700 rounded-xl p-4 flex items-center gap-4">
-            <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-3 shrink-0">
-              <Ticket size={24} className="text-orange-500" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{c.description}</p>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-orange-500 text-sm tracking-wider bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 rounded border border-orange-200 dark:border-orange-700">{c.code}</span>
-                <span className="text-xs font-semibold text-green-600">{c.discount}</span>
-              </div>
-              {c.expiresAt && (
-                <p className="text-xs text-gray-400 mt-1">หมดอายุ {new Date(c.expiresAt).toLocaleDateString("th-TH")}</p>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-async function CouponsSection() {
-  let coupons: { id: number; code: string; description: string; discount: string; expiresAt: string | null }[] = [];
-  try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || "https://kaoshop-omega.vercel.app"}/api/coupons`, { cache: "no-store" });
     if (res.ok) coupons = await res.json();
   } catch {}
@@ -185,7 +147,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
-            {/* Coupons */}
+
+      {/* Coupons */}
       <CouponsSection />
 
       {/* Categories */}
