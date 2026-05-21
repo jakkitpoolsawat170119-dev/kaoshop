@@ -1,13 +1,12 @@
-import { Star, ThumbsUp, ThumbsDown, ExternalLink, Eye, ShoppingCart, Ticket } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import { Star, ThumbsUp, ThumbsDown, ExternalLink, Eye, ShoppingCart } from "lucide-react";
-
-export const dynamic = "force-dynamic";
+import { Star, ThumbsUp, ThumbsDown, Eye, ShoppingCart, Ticket } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import ProductImageGallery from "@/components/ProductImageGallery";
+
+export const dynamic = "force-dynamic";
 
 async function CouponsInline() {
   let coupons: { id: number; code: string; description: string; discount: string }[] = [];
@@ -78,7 +77,6 @@ export default async function ArticlePage({
     notFound();
   }
 
-  // เพิ่ม view count
   await prisma.article.update({
     where: { id: article.id },
     data: { views: { increment: 1 } },
@@ -101,7 +99,7 @@ export default async function ArticlePage({
   let scoreBreakdown: ScoreBreakdown | null = null;
   try {
     if (article.scoreBreakdown) scoreBreakdown = JSON.parse(article.scoreBreakdown);
-  } catch { /* ใช้ null */ }
+  } catch {}
 
   let useCases: string[] = [];
   try {
@@ -109,7 +107,7 @@ export default async function ArticlePage({
       const parsed = JSON.parse(article.useCases);
       useCases = Array.isArray(parsed) ? parsed : [];
     }
-  } catch { /* ใช้ [] */ }
+  } catch {}
 
   const scoreLabels: Record<keyof ScoreBreakdown, string> = {
     value: "ความคุ้มค่า",
@@ -127,7 +125,6 @@ export default async function ArticlePage({
 
   const overallColor = getScoreColor(article.rating * (10 / 5));
 
-  // บทความที่เกี่ยวข้อง
   const relatedArticles = await prisma.article.findMany({
     where: {
       published: true,
@@ -152,7 +149,7 @@ export default async function ArticlePage({
         <span className="text-gray-600 line-clamp-1">{article.title}</span>
       </nav>
 
-      {/* Title & Meta — outside card like my-best */}
+      {/* Title & Meta */}
       <div className="mb-6">
         <span className="text-xs font-semibold text-green-600 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 px-3 py-1 rounded-full">
           {article.category.name}
@@ -174,12 +171,9 @@ export default async function ArticlePage({
         </div>
       </div>
 
-      {/* Product Card — my-best style */}
+      {/* Product Card */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden mb-6">
-
-        {/* Image + Score side by side */}
         <div className="md:flex">
-          {/* Product Image Gallery */}
           <div className="md:w-2/5 bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4 min-h-64">
             <ProductImageGallery
               featuredImage={article.featuredImage}
@@ -188,15 +182,10 @@ export default async function ArticlePage({
               title={article.title}
             />
           </div>
-
-          {/* Score Section */}
           <div className="md:w-3/5 p-6 border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700">
-            {/* Product Name */}
             {article.productName && (
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{article.productName}</p>
             )}
-
-            {/* Overall Score Circle */}
             <div className="flex items-center gap-4 mb-5">
               <div className={`w-20 h-20 rounded-full flex flex-col items-center justify-center border-4 shrink-0
                 ${overallColor.text === "text-green-600" ? "border-green-500 bg-green-50 dark:bg-green-900/30" :
@@ -228,8 +217,6 @@ export default async function ArticlePage({
                 )}
               </div>
             </div>
-
-            {/* Score Breakdown — numbered like my-best */}
             {scoreBreakdown && (
               <div className="space-y-3">
                 {(Object.keys(scoreLabels) as Array<keyof ScoreBreakdown>).map((key, idx) => {
@@ -245,10 +232,7 @@ export default async function ArticlePage({
                         <span className={`text-xs font-bold ${color.text}`}>{val}/10</span>
                       </div>
                       <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
-                        <div
-                          className={`${color.bar} h-2 rounded-full`}
-                          style={{ width: `${val * 10}%` }}
-                        />
+                        <div className={`${color.bar} h-2 rounded-full`} style={{ width: `${val * 10}%` }} />
                       </div>
                     </div>
                   );
@@ -257,8 +241,6 @@ export default async function ArticlePage({
             )}
           </div>
         </div>
-
-        {/* Price + CTA — full width bottom bar */}
         <div className="border-t border-gray-100 dark:border-gray-700 px-6 py-4 flex items-center justify-between bg-gray-50 dark:bg-gray-900/50">
           <div>
             <p className="text-xs text-gray-400">ราคาโดยประมาณ</p>
@@ -282,7 +264,7 @@ export default async function ArticlePage({
         </div>
       </div>
 
-      {/* จุดเด่น / จุดด้อย — my-best style */}
+      {/* จุดเด่น / จุดด้อย */}
       {(pros.length > 0 || cons.length > 0) && (
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           {pros.length > 0 && (
@@ -336,7 +318,16 @@ export default async function ArticlePage({
         />
       </div>
 
-      {/* Final CTA — my-best style, green, prominent */}
+      {/* Coupons */}
+      <div className="bg-orange-50 dark:bg-orange-900/20 border border-dashed border-orange-300 dark:border-orange-700 rounded-2xl p-5 mb-6">
+        <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
+          <Ticket size={16} className="text-orange-500" />
+          โค้ดส่วนลด Shopee วันนี้
+        </h3>
+        <CouponsInline />
+      </div>
+
+      {/* Final CTA */}
       {article.affiliateUrl && (
         <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 text-center mb-8">
           {article.productName && (
