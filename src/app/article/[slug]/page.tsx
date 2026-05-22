@@ -16,12 +16,14 @@ async function CouponsInline() {
   } catch {}
   if (coupons.length === 0) return null;
   return (
-    <div className="space-y-2">
+       <div className="space-y-3">
       {coupons.map((c) => (
-        <div key={c.id} className="flex items-center gap-3">
-          <span className="font-black text-orange-500 text-sm tracking-wider bg-white dark:bg-gray-800 px-3 py-1 rounded border border-orange-200 dark:border-orange-700 shrink-0">{c.code}</span>
-          <span className="text-sm text-gray-600 dark:text-gray-300">{c.description}</span>
-          <span className="text-xs font-semibold text-green-600 shrink-0">{c.discount}</span>
+        <div key={c.id} className="flex items-center justify-between gap-3 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 shadow-sm border border-orange-100 dark:border-orange-800">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-sm text-gray-700 dark:text-gray-200 truncate">{c.description}</span>
+            <span className="shrink-0 text-xs font-bold text-white bg-green-500 px-2 py-0.5 rounded-full">{c.discount}</span>
+          </div>
+          <a href={c.code} target="_blank" rel="noopener noreferrer" className="shrink-0 text-xs font-bold text-white bg-orange-500 hover:bg-orange-600 active:scale-95 transition-all px-3 py-1.5 rounded-lg shadow">รับโค้ด</a>
         </div>
       ))}
     </div>
