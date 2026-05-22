@@ -80,23 +80,30 @@ async function CouponsSection() {
     <section className="mb-12">
       <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
         <Ticket size={20} className="text-orange-500" />
-        โค้ดส่วนลด Shopee
+        โค้ดส่วนลด Shopee วันนี้
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {coupons.map((c) => (
-          <div key={c.id} className="bg-white dark:bg-gray-800 border border-dashed border-orange-300 dark:border-orange-700 rounded-xl p-4 flex items-center gap-4">
-            <div className="bg-orange-50 dark:bg-orange-900/30 rounded-lg p-3 shrink-0">
-              <Ticket size={24} className="text-orange-500" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{c.description}</p>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-orange-500 text-sm tracking-wider bg-orange-50 dark:bg-orange-900/30 px-2 py-0.5 rounded border border-orange-200 dark:border-orange-700">{c.code}</span>
-                <span className="text-xs font-semibold text-green-600">{c.discount}</span>
+          <div key={c.id} className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden border border-orange-100 dark:border-orange-900 flex flex-col">
+            <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-orange-500" />
+            <div className="p-4 flex flex-col gap-3 flex-1">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex flex-col items-center justify-center border border-orange-200 dark:border-orange-700">
+                  <span className="text-xs font-black text-orange-500 leading-none">{c.discount}</span>
+                  <span className="text-[9px] text-orange-400 mt-0.5">OFF</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 leading-snug line-clamp-2">{c.description}</p>
+                  {c.expiresAt && (
+                    <p className="text-xs text-gray-400 mt-1">หมดอายุ {new Date(c.expiresAt).toLocaleDateString("th-TH")}</p>
+                  )}
+                </div>
               </div>
-              {c.expiresAt && (
-                <p className="text-xs text-gray-400 mt-1">หมดอายุ {new Date(c.expiresAt).toLocaleDateString("th-TH")}</p>
-              )}
+              <a href={c.code} target="_blank" rel="noopener noreferrer"
+                className="mt-auto flex items-center justify-center gap-2 w-full bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 active:scale-95 transition-all text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-orange-200 dark:shadow-none">
+                <Ticket size={14} />
+                รับโค้ดส่วนลด
+              </a>
             </div>
           </div>
         ))}
