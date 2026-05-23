@@ -61,6 +61,39 @@ export async function generateMetadata({
     },
   };
 }
+function ArticleJsonLd({ article }: { article: {
+  title: string; slug: string; excerpt: string | null;
+  rating: number; featuredImage: string | null;
+  price: string | null; createdAt: Date; updatedAt: Date;
+}}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "name": article.title,
+    "description": article.excerpt || `รีวิว ${article.title}`,
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": article.rating,
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "author": { "@type": "Organization", "name": "KaoShop" },
+    "datePublished": article.createdAt.toISOString(),
+    "dateModified": article.updatedAt.toISOString(),
+    ...(article.featuredImage && { "image": article.featuredImage }),
+    "itemReviewed": {
+      "@type": "Product",
+      "name": article.title,
+      ...(article.price && { "offers": {
+        "@type": "Offer",
+        "price": article.price.replace(/[^0-9.]/g, ""),
+        "priceCurrency": "THB",
+        "availability": "https://schema.org/InStock"
+      }})
+    }
+  };
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
+}
 
 export default async function ArticlePage({
   params,
@@ -140,6 +173,7 @@ export default async function ArticlePage({
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
+            <ArticleJsonLd article={article} />
       {/* Breadcrumb */}
       <nav className="text-xs text-gray-400 mb-4 flex items-center gap-1 flex-wrap">
         <Link href="/" className="hover:text-green-600">หน้าแรก</Link>
@@ -150,7 +184,7 @@ export default async function ArticlePage({
         <span>/</span>
         <span className="text-gray-600 line-clamp-1">{article.title}</span>
       </nav>
-
+      
       {/* Title & Meta */}
       <div className="mb-6">
         <span className="text-xs font-semibold text-green-600 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 px-3 py-1 rounded-full">
