@@ -83,7 +83,7 @@ function ArticleJsonLd({ article }: { article: {
     ...(article.featuredImage && { "image": article.featuredImage }),
     "itemReviewed": {
       "@type": "Product",
-      "name": article.title,
+      "name": article.title,...(article.featuredImage && { "image": article.featuredImage }),
       ...(article.price && { "offers": {
         "@type": "Offer",
         "price": article.price.replace(/[^0-9.]/g, ""),
