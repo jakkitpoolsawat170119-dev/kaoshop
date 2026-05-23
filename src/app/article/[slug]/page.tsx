@@ -88,7 +88,11 @@ function ArticleJsonLd({ article }: { article: {
         "@type": "Offer",
         "price": article.price.replace(/[^0-9.]/g, ""),
         "priceCurrency": "THB",
-        "availability": "https://schema.org/InStock"
+       "availability": "https://schema.org/InStock",
+"seller": {
+  "@type": "Organization",
+  "name": "Shopee"
+}
       }})
     }
   };
