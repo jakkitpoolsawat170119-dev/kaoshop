@@ -45,6 +45,7 @@ export async function PUT(
       ...(body.price !== undefined && { price: body.price }),
       ...(body.published !== undefined && { published: body.published }),
       ...(body.featuredImage !== undefined && { featuredImage: body.featuredImage }),
+      ...(body.videoUrl !== undefined && { videoUrl: body.videoUrl || null }),
     },
     include: { category: true },
   });

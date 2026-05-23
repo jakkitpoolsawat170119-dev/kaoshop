@@ -50,6 +50,7 @@ export async function PUT(
       ...(body.productName !== undefined && { productName: body.productName }),
       ...(body.published !== undefined && { published: body.published }),
       ...(body.categoryId !== undefined && { categoryId: parseInt(body.categoryId) }),
+      ...(body.videoUrl !== undefined && { videoUrl: body.videoUrl || null }),
     },
     include: { category: true },
   });

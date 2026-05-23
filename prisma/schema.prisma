@@ -38,6 +38,7 @@ model Article {
   published      Boolean   @default(false)
   views          Int       @default(0)
   clicks         Int       @default(0) // จำนวนคลิก affiliate link
+  videoUrl       String?   // URL ของวิดีโอรีวิว (YouTube / TikTok)
   categoryId     Int
   category       Category  @relation(fields: [categoryId], references: [id])
   createdAt      DateTime  @default(now())
