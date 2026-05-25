@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     price,
     productName,
     categoryId,
+    videoUrl,
     published = false,
   } = body;
 
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
       affiliateUrl: affiliateUrl || null,
       price: price || null,
       productName: productName || null,
+      videoUrl: videoUrl || null,
       published,
       categoryId: parseInt(categoryId),
     },
