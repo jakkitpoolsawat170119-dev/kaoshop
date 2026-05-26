@@ -423,7 +423,7 @@
           "parameters": [
             {
               "name": "x-api-key",
-              "value": "YOUR_SHOTSTACK_STAGE_API_KEY"
+              "value": "BdkBSq4dfiiyX9v9B2TSYlmx6F5SRICUhY4o7tE6"
             },
             {
               "name": "Content-Type",
@@ -463,7 +463,7 @@
           "parameters": [
             {
               "name": "x-api-key",
-              "value": "YOUR_SHOTSTACK_STAGE_API_KEY"
+              "value": "BdkBSq4dfiiyX9v9B2TSYlmx6F5SRICUhY4o7tE6"
             }
           ]
         },
