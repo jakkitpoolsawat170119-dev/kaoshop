@@ -1,0 +1,663 @@
+{
+  "name": "KaoShop - Schedule Auto Review v2 (AI Video+Voice)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "6965810e-d0e5-4088-8802-2173a200cfc6",
+      "name": "ทุกวัน 08:00 น.1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-18176, -1528]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1n51ZJzoQ4nZNCqu9HOQ-qgA1X8K_-ZIkalwtnGPfgfQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ชีต1",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "db436b89-2b38-4684-ad1d-7edeb19b84d9",
+      "name": "อ่าน Google Sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [-17952, -1528],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst pending = items.filter(item => {\n  const status = (item.json['Status'] || '').toLowerCase().trim();\n  return status === 'pending';\n});\nif (pending.length === 0) {\n  console.log('ไม่มีสินค้าที่รอสร้างบทความ');\n  return [];\n}\nconsole.log(`พบ ${pending.length} สินค้าที่รอสร้างบทความ`);\nreturn pending;"
+      },
+      "id": "51b1fb55-a0df-42fd-831b-8b1b722c32f0",
+      "name": "กรองรายการ pending1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-17728, -1528]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "7c4fb131-8126-4273-9ab3-b102294e8b35",
+      "name": "วนทีละสินค้า1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [-17504, -1528]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "645e1954-0ed7-4cce-aa55-a074e0c7cd80",
+              "name": "product_name",
+              "value": "=={{ $json['ชื่อสินค้า'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bf94f377-4593-47cb-a936-440a81d4d145",
+              "name": "price",
+              "value": "=={{ $json['ราคา'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0391e102-fe63-46bd-bc6f-161ed4a534a1",
+              "name": "category",
+              "value": "={{ $json['หมวดหมู่'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a731be19-ad3d-4111-9411-42de20174317",
+              "name": "highlights",
+              "value": "={{ $json['จุดเด่น'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2a877ab5-17d7-4a5d-b589-2edacdc9e1d6",
+              "name": "affiliate_url",
+              "value": "={{ $json['Affiliate URL'] }}",
+              "type": "string"
+            },
+            {
+              "id": "0dee42ee-95a7-4cc1-a7a3-bc981b4e27db",
+              "name": "=image_url",
+              "value": "={{ $json['image_url'] }}",
+              "type": "string"
+            },
+            {
+              "id": "e6218202-326e-482c-b778-b12c80a5e87f",
+              "name": "row_number",
+              "value": "=={{ $json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "26924612-7ff2-4864-8a8a-0a47ee57a772",
+              "name": "image_url_2",
+              "value": "={{ $json['image_url_2'] }}",
+              "type": "string"
+            },
+            {
+              "id": "44ac3737-0464-4e3c-b9d5-b89ad94fd845",
+              "name": "image_url_3",
+              "value": "={{ $json['image_url_3'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "name": "เตรียมข้อมูล",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-17280, -1600],
+      "id": "66bc691b-76e6-4e88-a30c-1fb68c894b03"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ (() => {\n  const candidates = [$json['image_url'], $json['image_url_2'], $json['image_url_3']];\n  for (const url of candidates) {\n    const clean = String(url || '').replace(/^=/, '').trim();\n    if (clean && clean.startsWith('http')) return clean;\n  }\n  return '';\n})() }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "แปลงรูป Cloudinary1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-17056, -1600],
+      "id": "b03ac7cf-f6e2-491d-a3ca-f6f4bacc2891"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $('เตรียมข้อมูล').first().json['image_url_2'] }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "แปลงรูป Cloudinary4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-16832, -1600],
+      "id": "cc768aa7-816f-495e-9aa6-dc1dfebd8fd9",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $('เตรียมข้อมูล').first().json['image_url_3'] }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "แปลงรูป Cloudinary5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-16608, -1600],
+      "id": "c8604d39-f39a-427a-be7f-65a131ec6e51",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "คุณคือนักวิจัยสินค้า งานของคุณคือสร้าง \"research brief\" \nที่ระบุประเด็นสำคัญที่ผู้ซื้อสินค้านี้อยากรู้จริงๆ \nตอบเป็น bullet points กระชับ ภาษาไทย ไม่ต้องเขียนบทความ"
+            },
+            {
+              "content": "=คุณคือนักวิจัยสินค้า งานของคุณคือสร้าง \"research brief\" \nที่ระบุประเด็นสำคัญที่ผู้ซื้อสินค้านี้อยากรู้จริงๆ \nตอบเป็น bullet points กระชับ ภาษาไทย ไม่ต้องเขียนบทความ"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [-16384, -1600],
+      "id": "63ed1b97-b80b-4e82-8abd-e29f7cb77766",
+      "name": "Research Agent1",
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "model": "gpt-4o",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "คุณคือนักเขียนรีวิวสินค้ามืออาชีพของ KaoShop เว็บไซต์รีวิวสินค้าภาษาไทย\n\nหลักการเขียน:\n- เขียนเป็นภาษาไทยที่เป็นธรรมชาติ อ่านง่าย เหมือนเพื่อนแนะนำกัน\n- ไม่ใช้ภาษาทางการหรือแข็งทื่อ\n- ให้ข้อมูลที่เป็นประโยชน์จริงๆ ไม่ใช่แค่สรรเสริญสินค้า\n- ระบุข้อด้อยตามจริง เพื่อให้ผู้อ่านตัดสินใจได้\n- ความยาวบทความ 400-600 คำ\n\nส่งผลลัพธ์เป็น JSON ตามโครงสร้างที่กำหนดเท่านั้น ห้ามเพิ่มข้อความนอก JSON"
+            },
+            {
+              "content": "={{ \n  (() => {\n    const cat = $('เตรียมข้อมูล').first().json['category'] || '';\n    const research = $('Research Agent1').first().json.output[0].content[0].text;\n    \n    const style = cat.includes('หูฟัง') \n      ? 'เน้น: คุณภาพเสียง (bass/treble/soundstage), ANC, ความสบายใส่นาน, อายุแบต, latency'\n      : cat.includes('สุขภาพ')\n      ? 'เน้น: ประสิทธิผลจริง, ความปลอดภัย, วิธีใช้ที่ถูกต้อง, ข้อควรระวัง'\n      : cat.includes('หนังสือ')\n      ? 'เน้น: เนื้อหาครอบคลุมแค่ไหน, เหมาะกับระดับไหน, สไตล์การเขียน, นำไปใช้จริงได้ไหม'\n      : 'เน้น: สเปค/ประสิทธิภาพจริง, ความคุ้มราคา, เปรียบเทียบคู่แข่ง, ใครควรซื้อ';\n    \n    return `เขียนรีวิวสินค้าภาษาไทยสำหรับ: ${$('เตรียมข้อมูล').first().json['product_name']}\nหมวด: ${cat} | ราคา: ${$('เตรียมข้อมูล').first().json['price']} บาท\n\n--- Research Brief ---\n${research}\n---------------------\n\n${style}\n\nความยาว 600-800 คำ รูปแบบ HTML (ใช้ h2, p, ul)\nขึ้นต้นด้วย <div class=\"quick-take\">สรุปสั้น 2 ประโยค</div>\nจากนั้นแบ่ง 3-4 หัวข้อที่เจาะลึกประเด็นจาก research brief`;\n  })()\n}}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 2500,
+          "temperature": 0.7
+        },
+        "requestOptions": {}
+      },
+      "id": "34dc1180-41c2-4118-b704-00890fc2cdf8",
+      "name": "GPT-4o เขียนรีวิว1",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [-16032, -1600],
+      "credentials": {
+        "openAiApi": {
+          "id": "onuuENWoQxU73E2J",
+          "name": "OpenAi account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "คุณเป็น Senior Product Editor ผู้เชี่ยวชาญด้านการเขียนรีวิวสินค้าภาษาไทย\n\nงานของคุณ:\n1. ปรับแต่งบทความรีวิวให้อ่านง่าย น่าสนใจ และเป็นธรรมชาติ\n2. ให้คะแนนสินค้าอย่างตรงไปตรงมาตามข้อมูลที่มี\n3. คิดชื่อบทความที่ดึงดูดผู้อ่าน กระตุ้นให้คลิก\n\nตอบเป็น JSON เท่านั้น ห้ามมี markdown code block ห้ามมีข้อความอื่นนอก JSON:\n{\n  \"title\": \"ชื่อบทความดึงดูด ใช้คำที่ทำให้อยากคลิก เช่น 'คุ้มไหม?', 'ดีจริงหรือเปล่า?', 'ก่อนซื้อต้องรู้!'\",\n  \"content\": \"เนื้อหา HTML ที่ปรับแต่งแล้ว\",\n  \"rating\": คะแนน 0.0-5.0 (ทศนิยม 1 ตำแหน่ง),\n  \"scoreBreakdown\": {\n    \"value\": คะแนน 0-10,\n    \"quality\": คะแนน 0-10,\n    \"performance\": คะแนน 0-10,\n    \"design\": คะแนน 0-10,\n    \"ease\": คะแนน 0-10\n  }\n}"
+            },
+            {
+              "content": "={{ $('GPT-4o เขียนรีวิว1').first().json.message.content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [-15808, -1600],
+      "id": "708b652f-d79d-4736-91a5-b1c03286aace",
+      "name": "Editor Agent1",
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// ดึงข้อมูลจาก Editor Agent และเตรียม Video Script\nconst sheet = $('เตรียมข้อมูล').first().json;\nconst editorRaw = $('Editor Agent1').first().json;\nconst rawText = editorRaw.output?.[0]?.content?.[0]?.text\n  || editorRaw.message?.content || '';\n\nlet editorResult = {};\ntry {\n  const cleaned = rawText\n    .replace(/^```json\\n?/i, '')\n    .replace(/^```\\n?/i, '')\n    .replace(/\\n?```$/i, '')\n    .trim();\n  editorResult = JSON.parse(cleaned);\n} catch(e) {}\n\nconst productName = (sheet['product_name'] || '').replace(/^=+/, '').trim();\nconst price = String(sheet['price'] || '').replace(/^=+/, '').trim();\nconst rating = editorResult.rating || 4.0;\nconst ratingDisplay = typeof rating === 'number' ? rating.toFixed(1) : String(rating);\nconst categoryName = sheet['category'] || '';\nconst highlights = sheet['highlights'] || '';\n\nconst highlightList = highlights.split(',').map(s => s.trim()).filter(Boolean);\nconst top2 = highlightList.slice(0, 2).join(' และ ');\nconst top3Pros = highlightList.slice(0, 3);\n\n// สร้าง narration ภาษาไทยสำหรับ TTS\nconst narration = [\n  `วันนี้เรามารีวิว ${productName}${price ? ' ราคา ' + price + ' บาท' : ''}`,\n  categoryName ? `สินค้าหมวด${categoryName}` : '',\n  top2 ? `จุดเด่นของสินค้านี้คือ ${top2}` : '',\n  `คะแนนรวมจาก KaoShop อยู่ที่ ${ratingDisplay} จาก 5 คะแนน`,\n  `ดูรีวิวเต็มและราคาล่าสุดได้ที่ KaoShop\n`\n].filter(Boolean).join(' ');\n\n// รูปจาก Cloudinary (ใช้รูป jpg เพื่อความเข้ากันได้กับ Shotstack)\nconst toJpg = (url) => {\n  if (!url) return '';\n  return url.replace('/upload/', '/upload/f_jpg,c_fill,w_1280,h_720/');\n};\n\nconst img1 = toJpg($('แปลงรูป Cloudinary1').first().json?.secure_url || '');\nconst img2 = toJpg($('แปลงรูป Cloudinary4').first().json?.secure_url || '') || img1;\nconst img3 = toJpg($('แปลงรูป Cloudinary5').first().json?.secure_url || '') || img1;\n\nconsole.log(`Video Script สำหรับ: ${productName}`);\nconsole.log(`Narration (${narration.length} chars): ${narration.substring(0, 100)}...`);\n\nreturn [{\n  json: {\n    narration,\n    productName,\n    price,\n    rating: ratingDisplay,\n    categoryName,\n    img1, img2, img3,\n    top3Pros\n  }\n}];"
+      },
+      "id": "a1b2c3d4-1111-4abc-8def-111111111111",
+      "name": "สร้าง Video Script1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-15456, -1600]
+    },
+
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/speech",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: 'tts-1',\n  voice: 'nova',\n  input: $json.narration,\n  response_format: 'mp3',\n  speed: 0.95\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-2222-4abc-8def-222222222222",
+      "name": "สร้าง AI Voice1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-15232, -1600],
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/video/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "",
+              "parameterType": "formBinaryData",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            },
+            {
+              "name": "resource_type",
+              "value": "video"
+            },
+            {
+              "name": "folder",
+              "value": "kaoshop/audio"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-3333-4abc-8def-333333333333",
+      "name": "Upload Audio Cloudinary1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-15008, -1600],
+      "onError": "continueRegularOutput"
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// สร้าง Shotstack render body แบบครบวงจร\nconst script = $('สร้าง Video Script1').first().json;\nconst audioUrl = $('Upload Audio Cloudinary1').first().json?.secure_url || '';\n\nconst { productName, price, rating, img1, img2, img3, top3Pros } = script;\n\n// Helper: escape HTML special chars\nconst esc = (s) => String(s || '')\n  .replace(/&/g, '&amp;')\n  .replace(/</g, '&lt;')\n  .replace(/>/g, '&gt;')\n  .replace(/\"/g, '&quot;');\n\n// Slide 1: แนะนำสินค้า (0-5 วิ)\nconst slide1Html = `<div style=\"font-family:Arial,Helvetica,sans-serif;color:#ffffff;background:linear-gradient(135deg,rgba(0,0,0,0.85),rgba(20,20,60,0.85));padding:18px 28px;border-radius:12px;text-align:center;border:2px solid rgba(255,255,255,0.2)\">\n  <p style=\"margin:0 0 6px;font-size:32px;font-weight:bold;line-height:1.3\">${esc(productName)}</p>\n  ${price ? `<p style=\"margin:0;font-size:22px;color:#ffd700\">฿${esc(price)}</p>` : ''}\n</div>`;\n\n// Slide 2: จุดเด่นสินค้า (5-10 วิ)\nconst prosHtml = (top3Pros || []).slice(0, 3)\n  .map(p => `<li style=\"margin:0 0 8px;font-size:17px\">✓ ${esc(p)}</li>`)\n  .join('') || '<li style=\"font-size:17px\">✓ คุณภาพดีเยี่ยม</li>';\n\nconst slide2Html = `<div style=\"font-family:Arial,Helvetica,sans-serif;color:#ffffff;background:rgba(5,100,40,0.88);padding:18px 24px;border-radius:12px;border-left:5px solid #4ade80\">\n  <p style=\"margin:0 0 10px;font-size:19px;font-weight:bold;color:#4ade80\">จุดเด่นที่คุณต้องรู้</p>\n  <ul style=\"margin:0;padding:0;list-style:none\">${prosHtml}</ul>\n</div>`;\n\n// Slide 3: คะแนน (10-15 วิ)\nconst ratingNum = parseFloat(rating) || 4.0;\nconst stars = '★'.repeat(Math.round(ratingNum)) + '☆'.repeat(5 - Math.round(ratingNum));\nconst slide3Html = `<div style=\"font-family:Arial,Helvetica,sans-serif;color:#ffffff;background:rgba(0,0,0,0.82);padding:22px 36px;border-radius:14px;text-align:center;border:2px solid rgba(251,191,36,0.6)\">\n  <p style=\"margin:0 0 4px;font-size:16px;letter-spacing:1px;text-transform:uppercase;opacity:0.8\">คะแนน KaoShop</p>\n  <p style=\"margin:0;font-size:58px;font-weight:bold;color:#fbbf24;line-height:1\">${esc(rating)}</p>\n  <p style=\"margin:2px 0 6px;font-size:14px;opacity:0.7\">จาก 5.0</p>\n  <p style=\"margin:0;font-size:22px;color:#fbbf24\">${stars}</p>\n</div>`;\n\n// Slide 4: CTA ซื้อสินค้า (15-20 วิ)\nconst slide4Html = `<div style=\"font-family:Arial,Helvetica,sans-serif;color:#ffffff;background:rgba(234,88,12,0.92);padding:18px 36px;border-radius:12px;text-align:center\">\n  <p style=\"margin:0 0 4px;font-size:26px;font-weight:bold\">🛒 ซื้อได้ที่ Shopee</p>\n  <p style=\"margin:0;font-size:15px;opacity:0.9\">ดูรีวิวเต็ม + ราคาล่าสุดที่ KaoShop.com</p>\n</div>`;\n\n// สร้าง Shotstack timeline\nconst renderBody = {\n  timeline: {\n    soundtrack: audioUrl ? {\n      src: audioUrl,\n      effect: 'fadeOut',\n      volume: 1.0\n    } : undefined,\n    background: '#0a0a0a',\n    tracks: [\n      {\n        // Track 1: Text overlay (ชั้นบน)\n        clips: [\n          {\n            asset: { type: 'html', html: slide1Html, width: 900, height: 130 },\n            start: 0.5, length: 4,\n            position: 'bottom',\n            offset: { x: 0, y: 0.08 },\n            transition: { in: 'fade', out: 'fade' }\n          },\n          {\n            asset: { type: 'html', html: slide2Html, width: 860, height: 180 },\n            start: 5.5, length: 4,\n            position: 'bottom',\n            offset: { x: 0, y: 0.05 },\n            transition: { in: 'fade', out: 'fade' }\n          },\n          {\n            asset: { type: 'html', html: slide3Html, width: 380, height: 210 },\n            start: 10.5, length: 4,\n            position: 'center',\n            transition: { in: 'fade', out: 'fade' }\n          },\n          {\n            asset: { type: 'html', html: slide4Html, width: 800, height: 110 },\n            start: 15.5, length: 4,\n            position: 'bottom',\n            offset: { x: 0, y: 0.08 },\n            transition: { in: 'fade', out: 'fade' }\n          }\n        ]\n      },\n      {\n        // Track 2: Background images (ชั้นล่าง)\n        clips: [\n          {\n            asset: { type: 'image', src: img1 },\n            start: 0, length: 5,\n            fit: 'cover',\n            effect: 'zoomIn',\n            transition: { in: 'fade', out: 'fade' }\n          },\n          {\n            asset: { type: 'image', src: img2 || img1 },\n            start: 5, length: 5,\n            fit: 'cover',\n            effect: 'slideLeft',\n            transition: { in: 'fade', out: 'fade' }\n          },\n          {\n            asset: { type: 'image', src: img3 || img1 },\n            start: 10, length: 5,\n            fit: 'cover',\n            effect: 'zoomOut',\n            transition: { in: 'fade', out: 'fade' }\n          },\n          {\n            asset: { type: 'image', src: img1 },\n            start: 15, length: 5,\n            fit: 'cover',\n            effect: 'slideRight',\n            transition: { in: 'fade', out: 'fade' }\n          }\n        ]\n      }\n    ]\n  },\n  output: {\n    format: 'mp4',\n    resolution: 'hd',\n    fps: 25,\n    size: { width: 1280, height: 720 }\n  }\n};\n\nconsole.log(`Shotstack render body สำหรับ: ${productName}`);\n\nreturn [{ json: { renderBody, productName } }];"
+      },
+      "id": "a1b2c3d4-4444-4abc-8def-444444444444",
+      "name": "สร้าง Shotstack Body1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-14784, -1600]
+    },
+
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.shotstack.io/stage/render",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_STAGE_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.renderBody) }}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-5555-4abc-8def-555555555555",
+      "name": "Shotstack Render1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-14560, -1600]
+    },
+
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "a1b2c3d4-6666-4abc-8def-666666666666",
+      "name": "รอ 60 วินาที1",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [-14336, -1600],
+      "webhookId": "b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e"
+    },
+
+    {
+      "parameters": {
+        "url": "=https://api.shotstack.io/stage/render/{{ $('Shotstack Render1').first().json.response.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "YOUR_SHOTSTACK_STAGE_API_KEY"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-7777-4abc-8def-777777777777",
+      "name": "เช็คสถานะ Shotstack1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-14112, -1600]
+    },
+
+    {
+      "parameters": {
+        "jsCode": "// ดึง output จาก Editor Agent\nconst editorRaw = $('Editor Agent1').first().json;\nconst rawText = editorRaw.output?.[0]?.content?.[0]?.text\n  || editorRaw.message?.content || '';\n\nconst cleaned = rawText\n  .replace(/^```json\\n?/i, '')\n  .replace(/^```\\n?/i, '')\n  .replace(/\\n?```$/i, '')\n  .trim();\n\nlet editorResult = {};\ntry {\n  editorResult = JSON.parse(cleaned);\n} catch(e) {\n  editorResult = { content: cleaned };\n}\n\nconst htmlContent = editorResult.content || cleaned;\nconst rating = editorResult.rating || null;\nconst scoreBreakdown = editorResult.scoreBreakdown || null;\n\n// ดึงข้อมูลจาก Sheet\nconst sheet = $('เตรียมข้อมูล').first().json;\nconst productName = (sheet['product_name'] || '').replace(/^=+/, '').trim();\nconst price = String(sheet['price'] || '').replace(/^=+/, '').trim();\nconst affiliateUrl = sheet['affiliate_url'] || '';\nconst categoryName = sheet['category'] || 'ทั่วไป';\n\n// ดึง Video URL จาก Shotstack (mp4 พร้อม AI voice + text overlay)\nconst shotstackResp = $('เช็คสถานะ Shotstack1').first().json;\nconst videoUrl = shotstackResp?.response?.url || null;\n\nif (videoUrl) {\n  console.log(`Video URL (Shotstack): ${videoUrl}`);\n} else {\n  console.log('ไม่มี video URL จาก Shotstack:', JSON.stringify(shotstackResp));\n}\n\n// ดึงรูปจาก Cloudinary\nconst img1 = $('แปลงรูป Cloudinary1').first().json?.secure_url || '';\nconst img2 = $('แปลงรูป Cloudinary4').first().json?.secure_url || '';\nconst img3 = $('แปลงรูป Cloudinary5').first().json?.secure_url || '';\nconst images = [img1, img2, img3].filter(Boolean);\n\nconst baseSlug = productName\n  .toLowerCase()\n  .replace(/[^a-z0-9\\s-]/g, '')\n  .replace(/\\s+/g, '-')\n  .replace(/-+/g, '-')\n  .replace(/^-|-$/g, '')\n  .substring(0, 60);\n\nconst slug = (baseSlug || 'article') + '-' + Date.now();\n\nconst prosRaw = sheet['pros'] || '';\nconst consRaw = sheet['cons'] || '';\nconst pros = prosRaw ? prosRaw.split(',').map(s => s.trim()).filter(Boolean) : [];\nconst cons = consRaw ? consRaw.split(',').map(s => s.trim()).filter(Boolean) : [];\n\nconst title = editorResult.title\n  || `รีวิว ${productName}${price ? ' ราคา ' + price + ' บาท' : ''}`;\n\nconst excerpt = `รีวิวครบ ${productName} พร้อมข้อดี-ข้อเสีย คะแนน ${rating ? rating.toFixed(1) : '?'}/5 และความคุ้มค่าราคา`;\n\nreturn [{\n  json: {\n    title,\n    slug,\n    excerpt,\n    content: htmlContent,\n    featuredImage: images[0] || null,\n    images,\n    rating,\n    scoreBreakdown,\n    pros,\n    cons,\n    affiliateUrl,\n    price: String(price),\n    productName,\n    categoryName,\n    categorySlug: categoryName.toLowerCase().replace(/\\s+/g, '-'),\n    videoUrl: videoUrl || null,\n    published: true,\n  }\n}];"
+      },
+      "id": "0fcd0292-9719-4058-9bf6-7b0d1dbd6d1a",
+      "name": "เตรียม Payload1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-13888, -1600]
+    },
+
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://kaoshop-omega.vercel.app/api/articles",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer ks_d7c548ef8a5a25220f1da408bec2c2a15c982b32250de8e0c12efaa3369684c5"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "70a951c8-ec54-497c-bd7a-a6aa3c62420a",
+      "name": "POST ไปยัง KaoShop1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-13664, -1600]
+    },
+
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1n51ZJzoQ4nZNCqu9HOQ-qgA1X8K_-ZIkalwtnGPfgfQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ชีต1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('วนทีละสินค้า1').first().json.row_number }}\n\n",
+            "Status": "done",
+            "ชื่อสินค้า": "={{ $('อ่าน Google Sheet1').item.json['ชื่อสินค้า'] }}",
+            "ราคา": "={{ $('อ่าน Google Sheet1').item.json['ราคา'] }}",
+            "หมวดหมู่": "={{ $('อ่าน Google Sheet1').item.json['หมวดหมู่'] }}",
+            "Shopee URL": "={{ $('อ่าน Google Sheet1').item.json['Shopee URL'] }}",
+            "Affiliate URL": "={{ $('อ่าน Google Sheet1').item.json['Affiliate URL'] }}",
+            "image_url ": "={{ $('อ่าน Google Sheet1').item.json['image_url '] }}",
+            "image_url_2": "={{ $('อ่าน Google Sheet1').item.json.image_url_2 }}",
+            "image_url_3": "={{ $('อ่าน Google Sheet1').item.json.image_url_3 }}",
+            "จุดเด่น": "={{ $('อ่าน Google Sheet1').item.json['จุดเด่น'] }}"
+          },
+          "matchingColumns": ["row_number"],
+          "schema": [
+            { "id": "Shopee URL", "displayName": "Shopee URL", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "ชื่อสินค้า", "displayName": "ชื่อสินค้า", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "ราคา", "displayName": "ราคา", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "หมวดหมู่", "displayName": "หมวดหมู่", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "Affiliate URL", "displayName": "Affiliate URL", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "image_url ", "displayName": "image_url ", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "image_url_2", "displayName": "image_url_2", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "image_url_3", "displayName": "image_url_3", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "จุดเด่น", "displayName": "จุดเด่น", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "Status", "displayName": "Status", "required": false, "defaultMatch": false, "display": true, "type": "string", "canBeUsedToMatch": true, "removed": false },
+            { "id": "row_number", "displayName": "row_number", "required": false, "defaultMatch": false, "display": true, "type": "number", "canBeUsedToMatch": true, "readOnly": true, "removed": false }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "6fd01f0d-55db-4dbc-a023-e79e417664df",
+      "name": "อัพเดท Status Done1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [-13440, -1528],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    }
+  ],
+
+  "connections": {
+    "ทุกวัน 08:00 น.1": {
+      "main": [[{ "node": "อ่าน Google Sheet1", "type": "main", "index": 0 }]]
+    },
+    "อ่าน Google Sheet1": {
+      "main": [[{ "node": "กรองรายการ pending1", "type": "main", "index": 0 }]]
+    },
+    "กรองรายการ pending1": {
+      "main": [[{ "node": "วนทีละสินค้า1", "type": "main", "index": 0 }]]
+    },
+    "วนทีละสินค้า1": {
+      "main": [
+        [],
+        [{ "node": "เตรียมข้อมูล", "type": "main", "index": 0 }]
+      ]
+    },
+    "เตรียมข้อมูล": {
+      "main": [[{ "node": "แปลงรูป Cloudinary1", "type": "main", "index": 0 }]]
+    },
+    "แปลงรูป Cloudinary1": {
+      "main": [[{ "node": "แปลงรูป Cloudinary4", "type": "main", "index": 0 }]]
+    },
+    "แปลงรูป Cloudinary4": {
+      "main": [[{ "node": "แปลงรูป Cloudinary5", "type": "main", "index": 0 }]]
+    },
+    "แปลงรูป Cloudinary5": {
+      "main": [[{ "node": "Research Agent1", "type": "main", "index": 0 }]]
+    },
+    "Research Agent1": {
+      "main": [[{ "node": "GPT-4o เขียนรีวิว1", "type": "main", "index": 0 }]]
+    },
+    "GPT-4o เขียนรีวิว1": {
+      "main": [[{ "node": "Editor Agent1", "type": "main", "index": 0 }]]
+    },
+    "Editor Agent1": {
+      "main": [[{ "node": "สร้าง Video Script1", "type": "main", "index": 0 }]]
+    },
+    "สร้าง Video Script1": {
+      "main": [[{ "node": "สร้าง AI Voice1", "type": "main", "index": 0 }]]
+    },
+    "สร้าง AI Voice1": {
+      "main": [[{ "node": "Upload Audio Cloudinary1", "type": "main", "index": 0 }]]
+    },
+    "Upload Audio Cloudinary1": {
+      "main": [[{ "node": "สร้าง Shotstack Body1", "type": "main", "index": 0 }]]
+    },
+    "สร้าง Shotstack Body1": {
+      "main": [[{ "node": "Shotstack Render1", "type": "main", "index": 0 }]]
+    },
+    "Shotstack Render1": {
+      "main": [[{ "node": "รอ 60 วินาที1", "type": "main", "index": 0 }]]
+    },
+    "รอ 60 วินาที1": {
+      "main": [[{ "node": "เช็คสถานะ Shotstack1", "type": "main", "index": 0 }]]
+    },
+    "เช็คสถานะ Shotstack1": {
+      "main": [[{ "node": "เตรียม Payload1", "type": "main", "index": 0 }]]
+    },
+    "เตรียม Payload1": {
+      "main": [[{ "node": "POST ไปยัง KaoShop1", "type": "main", "index": 0 }]]
+    },
+    "POST ไปยัง KaoShop1": {
+      "main": [[{ "node": "อัพเดท Status Done1", "type": "main", "index": 0 }]]
+    },
+    "อัพเดท Status Done1": {
+      "main": [[{ "node": "วนทีละสินค้า1", "type": "main", "index": 0 }]]
+    }
+  },
+
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "21a28d363b1282ab9c0b35e07c5213c656bd9175ba2b796797fa7b0daedadf08"
+  },
+  "tags": [
+    { "name": "v2-ai-video" }
+  ]
+}
