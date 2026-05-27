@@ -92,7 +92,7 @@ export default function VideoEmbed({ videoUrl, title }: Props) {
 
   if (!ytEmbed && !ttEmbed && !isDirect) return null;
 
-  const label = ytEmbed ? "YouTube" : ttEmbed ? "TikTok" : "วิดีโอรีวิว";
+  const label = ytEmbed ? "YouTube" : ttEmbed ? "TikTok" : "สินค้า";
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden mb-6">

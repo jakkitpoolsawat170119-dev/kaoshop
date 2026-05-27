@@ -234,8 +234,13 @@ export default async function ArticlePage({
       </nav>
 
       <div className="lg:grid lg:grid-cols-[1fr_260px] lg:gap-8">
+        {/* TOC Sidebar — first in DOM so mobile shows it at top; explicit col placement on desktop */}
+        <div className="lg:col-start-2 lg:row-start-1">
+          <TableOfContents items={tocItems} />
+        </div>
+
         {/* Main content column */}
-        <div className="min-w-0">
+        <div className="min-w-0 lg:col-start-1 lg:row-start-1">
           {/* Title & Meta */}
           <div className="mb-5">
             <span className="text-xs font-semibold text-green-600 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 px-3 py-1 rounded-full">
@@ -487,8 +492,6 @@ export default async function ArticlePage({
           )}
         </div>
 
-        {/* TOC Sidebar */}
-        <TableOfContents items={tocItems} />
       </div>
     </div>
   );
