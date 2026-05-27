@@ -477,10 +477,10 @@
             {
               "id": "cond-veo3-done",
               "leftValue": "={{ $json.data.successFlag }}",
-              "rightValue": 1,
+              "rightValue": 0,
               "operator": {
                 "type": "number",
-                "operation": "equals"
+                "operation": "notEquals"
               }
             }
           ],
