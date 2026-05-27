@@ -258,7 +258,7 @@
 
     {
       "parameters": {
-        "url": "=https://api.kie.ai/api/v1/jobs/recordInfo?taskId={{ $('Veo 3 สร้างวีดีโอ1').first().json.data.taskId }}",
+        "url": "=https://api.kie.ai/api/v1/veo/record/info?taskId={{ $('Veo 3 สร้างวีดีโอ1').first().json.data.taskId }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
