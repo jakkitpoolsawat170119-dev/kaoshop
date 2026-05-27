@@ -732,7 +732,8 @@
       "position": [
         -13888,
         -1600
-      ]
+      ],
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
