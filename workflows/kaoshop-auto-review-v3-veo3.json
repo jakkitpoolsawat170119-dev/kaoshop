@@ -734,6 +734,34 @@
         -1600
       ],
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "REPLACE_WITH_N8N_SOCIAL_WEBHOOK_URL",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "node-social-media-call",
+      "name": "โพสต์ Social Media1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -13328,
+        -1600
+      ],
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -947,7 +975,7 @@
       "main": [
         [
           {
-            "node": "อัพเดท Status Done1",
+            "node": "โพสต์ Social Media1",
             "type": "main",
             "index": 0
           }
@@ -970,6 +998,17 @@
         [
           {
             "node": "เตรียม Payload1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "โพสต์ Social Media1": {
+      "main": [
+        [
+          {
+            "node": "อัพเดท Status Done1",
             "type": "main",
             "index": 0
           }
