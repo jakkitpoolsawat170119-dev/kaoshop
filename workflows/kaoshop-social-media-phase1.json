@@ -17,13 +17,61 @@
     },
     {
       "parameters": {
-        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 200);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\n\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\n// Facebook message\nlet fbText = '\\ud83d\\uded2 ' + title + '\\n\\n';\nif (summary) fbText += summary + '...\\n\\n';\nif (rating) fbText += '\\u2b50 \\u0e04\\u0e30\\u0e41\\u0e19\\u0e19: ' + rating + '/5\\n';\nif (price) fbText += '\\ud83d\\udcb0 \\u0e23\\u0e32\\u0e04\\u0e32: \\u0e3f' + Number(price).toLocaleString('th-TH') + '\\n';\nfbText += '\\n\\ud83d\\udcd6 \\u0e2d\\u0e48\\u0e32\\u0e19\\u0e23\\u0e35\\u0e27\\u0e34\\u0e27\\u0e40\\u0e15\\u0e47\\u0e21: ' + articleUrl;\nif (affiliateUrl) fbText += '\\n\\ud83d\\udecd \\u0e0b\\u0e37\\u0e49\\u0e2d\\u0e2a\\u0e34\\u0e19\\u0e04\\u0e49\\u0e32: ' + affiliateUrl;\n\n// Line OA Flex Message payload\nconst heroImage = featuredImage || 'https://placehold.co/800x520/FF6B00/ffffff?text=KaoShop';\nconst linePayload = {\n  messages: [\n    {\n      type: 'flex',\n      altText: '\\ud83d\\udccc \\u0e1a\\u0e17\\u0e04\\u0e27\\u0e32\\u0e21\\u0e43\\u0e2b\\u0e21\\u0e48: ' + title,\n      contents: {\n        type: 'bubble',\n        hero: {\n          type: 'image',\n          url: heroImage,\n          size: 'full',\n          aspectRatio: '20:13',\n          aspectMode: 'cover',\n          action: { type: 'uri', uri: articleUrl }\n        },\n        body: {\n          type: 'box',\n          layout: 'vertical',\n          contents: [\n            {\n              type: 'text',\n              text: '\\ud83c\\udd95 \\u0e1a\\u0e17\\u0e04\\u0e27\\u0e32\\u0e21\\u0e43\\u0e2b\\u0e21\\u0e48!',\n              weight: 'bold',\n              color: '#1DB446',\n              size: 'sm'\n            },\n            {\n              type: 'text',\n              text: title,\n              weight: 'bold',\n              size: 'xl',\n              margin: 'md',\n              wrap: true\n            },\n            rating ? {\n              type: 'text',\n              text: '\\u2b50 ' + rating + '/5',\n              size: 'sm',\n              color: '#aaaaaa',\n              margin: 'md'\n            } : null,\n            summary ? {\n              type: 'text',\n              text: summary + '...',\n              size: 'sm',\n              color: '#555555',\n              margin: 'md',\n              wrap: true\n            } : null\n          ].filter(Boolean)\n        },\n        footer: {\n          type: 'box',\n          layout: 'vertical',\n          spacing: 'sm',\n          contents: [\n            {\n              type: 'button',\n              style: 'primary',\n              height: 'sm',\n              color: '#FF6B00',\n              action: { type: 'uri', label: '\\ud83d\\udcd6 \\u0e2d\\u0e48\\u0e32\\u0e19\\u0e23\\u0e35\\u0e27\\u0e34\\u0e27', uri: articleUrl }\n            },\n            affiliateUrl ? {\n              type: 'button',\n              style: 'secondary',\n              height: 'sm',\n              action: { type: 'uri', label: '\\ud83d\\udecd \\u0e0b\\u0e37\\u0e49\\u0e2d\\u0e40\\u0e25\\u0e22', uri: affiliateUrl }\n            } : null\n          ].filter(Boolean)\n        }\n      }\n    }\n  ]\n};\n\nreturn [{\n  json: {\n    title,\n    slug,\n    articleUrl,\n    featuredImage,\n    affiliateUrl,\n    fbText,\n    linePayload\n  }\n}];"
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 300);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price } }];"
       },
       "id": "node-prepare",
       "name": "เตรียม Content",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `สร้าง social media content จากสินค้าต่อไปนี้:\\n\\nชื่อสินค้า: ${data.title}\\nสรุป: ${data.summary || ''}\\nคะแนน: ${data.rating}/5\\nราคา: ฿${data.price || 'ไม่ระบุ'}\\nลิงก์บทความ: ${data.articleUrl}\\n${data.affiliateUrl ? 'ลิงก์ซื้อสินค้า: ' + data.affiliateUrl : ''}\\n\\nส่งกลับเป็น JSON เท่านั้น:\\n{\\n  \"fbCaption\": \"caption Facebook ภาษาไทย 100-150 คำ เน้นข้อดีสินค้า ทำให้น่าซื้อ + hashtag 5-8 ตัวท้ายข้อความ\",\\n  \"lineMessage\": \"ข้อความ Line กระชับไม่เกิน 100 ตัวอักษร + emoji + CTA\"\\n}`;\n\nconst openAIPayload = {\n  model: 'gpt-4o-mini',\n  response_format: { type: 'json_object' },\n  messages: [\n    {\n      role: 'system',\n      content: 'คุณเป็น Social Media Manager ผู้เชี่ยวชาญ content ภาษาไทยสำหรับร้านรีวิวสินค้า ตอบกลับเป็น JSON เท่านั้น'\n    },\n    {\n      role: 'user',\n      content: prompt\n    }\n  ]\n};\n\nreturn [{ json: { openAIPayload, ...data } }];"
+      },
+      "id": "node-build-prompt",
+      "name": "สร้าง GPT Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer REPLACE_WITH_OPENAI_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openAIPayload) }}",
+        "options": {}
+      },
+      "id": "node-gpt",
+      "name": "GPT สร้าง Caption",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const gpt = $input.first().json;\nconst prepData = $('เตรียม Content').first().json;\n\nlet fbCaption = '';\nlet lineMessage = '';\n\ntry {\n  const content = gpt.choices[0].message.content;\n  const parsed = JSON.parse(content);\n  fbCaption = parsed.fbCaption || '';\n  lineMessage = parsed.lineMessage || '';\n} catch(e) {\n  // fallback ถ้า GPT ไม่ส่ง JSON ถูกต้อง\n  fbCaption = '\\ud83d\\uded2 ' + prepData.title + (prepData.rating ? '\\n\\n\\u2b50 ' + prepData.rating + '/5' : '') + '\\n\\n\\ud83d\\udcd6 ' + prepData.articleUrl;\n  lineMessage = '\\ud83c\\udd95 ' + prepData.title.substring(0, 60) + '... \\ud83d\\udc49 ' + prepData.articleUrl;\n}\n\nconst heroImage = prepData.featuredImage || 'https://placehold.co/800x520/FF6B00/ffffff?text=KaoShop';\n\nconst linePayload = {\n  messages: [\n    {\n      type: 'flex',\n      altText: lineMessage || ('\\ud83d\\udccc \\u0e1a\\u0e17\\u0e04\\u0e27\\u0e32\\u0e21\\u0e43\\u0e2b\\u0e21\\u0e48: ' + prepData.title),\n      contents: {\n        type: 'bubble',\n        hero: {\n          type: 'image',\n          url: heroImage,\n          size: 'full',\n          aspectRatio: '20:13',\n          aspectMode: 'cover',\n          action: { type: 'uri', uri: prepData.articleUrl }\n        },\n        body: {\n          type: 'box',\n          layout: 'vertical',\n          contents: [\n            { type: 'text', text: '\\ud83c\\udd95 \\u0e1a\\u0e17\\u0e04\\u0e27\\u0e32\\u0e21\\u0e43\\u0e2b\\u0e21\\u0e48!', weight: 'bold', color: '#1DB446', size: 'sm' },\n            { type: 'text', text: prepData.title, weight: 'bold', size: 'xl', margin: 'md', wrap: true },\n            prepData.rating ? { type: 'text', text: '\\u2b50 ' + prepData.rating + '/5', size: 'sm', color: '#aaaaaa', margin: 'md' } : null,\n            lineMessage ? { type: 'text', text: lineMessage, size: 'sm', color: '#555555', margin: 'md', wrap: true } : null\n          ].filter(Boolean)\n        },\n        footer: {\n          type: 'box',\n          layout: 'vertical',\n          spacing: 'sm',\n          contents: [\n            {\n              type: 'button',\n              style: 'primary',\n              height: 'sm',\n              color: '#FF6B00',\n              action: { type: 'uri', label: '\\ud83d\\udcd6 \\u0e2d\\u0e48\\u0e32\\u0e19\\u0e23\\u0e35\\u0e27\\u0e34\\u0e27', uri: prepData.articleUrl }\n            },\n            prepData.affiliateUrl ? {\n              type: 'button',\n              style: 'secondary',\n              height: 'sm',\n              action: { type: 'uri', label: '\\ud83d\\udecd \\u0e0b\\u0e37\\u0e49\\u0e2d\\u0e40\\u0e25\\u0e22', uri: prepData.affiliateUrl }\n            } : null\n          ].filter(Boolean)\n        }\n      }\n    }\n  ]\n};\n\nreturn [{ json: { ...prepData, fbCaption, lineMessage, linePayload } }];"
+      },
+      "id": "node-parse-caption",
+      "name": "แปลง Caption",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
     },
     {
       "parameters": {
@@ -43,7 +91,7 @@
           "parameters": [
             {
               "name": "message",
-              "value": "={{ $json.fbText }}"
+              "value": "={{ $json.fbCaption }}"
             },
             {
               "name": "link",
@@ -57,7 +105,7 @@
       "name": "โพสต์ Facebook Page",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [680, 300],
+      "position": [1340, 300],
       "onError": "continueRegularOutput"
     },
     {
@@ -75,14 +123,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($('เตรียม Content').first().json.linePayload) }}",
+        "jsonBody": "={{ JSON.stringify($json.linePayload) }}",
         "options": {}
       },
       "id": "node-line",
       "name": "Broadcast Line OA",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [900, 300],
+      "position": [1560, 300],
       "onError": "continueRegularOutput"
     },
     {
@@ -94,60 +142,37 @@
       "name": "Respond Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1120, 300]
+      "position": [1780, 300]
     }
   ],
   "connections": {
     "Webhook": {
-      "main": [
-        [
-          {
-            "node": "เตรียม Content",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "เตรียม Content", "type": "main", "index": 0}]]
     },
     "เตรียม Content": {
-      "main": [
-        [
-          {
-            "node": "โพสต์ Facebook Page",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "สร้าง GPT Prompt", "type": "main", "index": 0}]]
+    },
+    "สร้าง GPT Prompt": {
+      "main": [[{"node": "GPT สร้าง Caption", "type": "main", "index": 0}]]
+    },
+    "GPT สร้าง Caption": {
+      "main": [[{"node": "แปลง Caption", "type": "main", "index": 0}]]
+    },
+    "แปลง Caption": {
+      "main": [[{"node": "โพสต์ Facebook Page", "type": "main", "index": 0}]]
     },
     "โพสต์ Facebook Page": {
-      "main": [
-        [
-          {
-            "node": "Broadcast Line OA",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Broadcast Line OA", "type": "main", "index": 0}]]
     },
     "Broadcast Line OA": {
-      "main": [
-        [
-          {
-            "node": "Respond Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{"node": "Respond Webhook", "type": "main", "index": 0}]]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "1",
+  "versionId": "2",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "kaoshop"
