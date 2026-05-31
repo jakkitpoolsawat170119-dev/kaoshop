@@ -1,0 +1,171 @@
+{
+  "name": "KaoShop TikTok Token Refresh",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 23
+            }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "ทุก 23 ชั่วโมง",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1ky12Dhady4SmgF06EjwrpswqQntIhNH2pm_n2QR7TQI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "filtersUI": {},
+        "options": {
+          "range": "A2:C2"
+        }
+      },
+      "id": "node-read-sheet",
+      "name": "อ่าน Token จาก Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\nconst refreshToken = row.refresh_token || row['B'] || '';\nif (!refreshToken) throw new Error('refresh_token not found in Google Sheet');\nreturn [{ json: { refreshToken } }];"
+      },
+      "id": "node-extract-token",
+      "name": "ดึง Refresh Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/oauth/token/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "client_key",
+              "value": "awdln12az5qe5ekj"
+            },
+            {
+              "name": "client_secret",
+              "value": "m9OElj3NTO9kTIH9N1e7zLxDjx9Ha3sm"
+            },
+            {
+              "name": "grant_type",
+              "value": "refresh_token"
+            },
+            {
+              "name": "refresh_token",
+              "value": "={{ $json.refreshToken }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-refresh",
+      "name": "Refresh TikTok Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\nif (!res.data || !res.data.access_token) {\n  throw new Error('TikTok refresh failed: ' + JSON.stringify(res));\n}\nconst now = new Date().toISOString();\nreturn [{ json: {\n  access_token: res.data.access_token,\n  refresh_token: res.data.refresh_token,\n  updated_at: now\n} }];"
+      },
+      "id": "node-parse-token",
+      "name": "แปลง Token ใหม่",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ky12Dhady4SmgF06EjwrpswqQntIhNH2pm_n2QR7TQI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "access_token": "={{ $json.access_token }}",
+            "refresh_token": "={{ $json.refresh_token }}",
+            "updated_at": "={{ $json.updated_at }}"
+          },
+          "matchingColumns": ["access_token"],
+          "schema": [
+            { "id": "access_token", "displayName": "access_token", "required": false, "defaultMatch": true, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "refresh_token", "displayName": "refresh_token", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string" },
+            { "id": "updated_at", "displayName": "updated_at", "required": false, "defaultMatch": false, "canBeUsedToMatch": false, "display": true, "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-write-sheet",
+      "name": "เขียน Token ใหม่ลง Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1340, 300]
+    }
+  ],
+  "connections": {
+    "ทุก 23 ชั่วโมง": {
+      "main": [[{"node": "อ่าน Token จาก Sheet", "type": "main", "index": 0}]]
+    },
+    "อ่าน Token จาก Sheet": {
+      "main": [[{"node": "ดึง Refresh Token", "type": "main", "index": 0}]]
+    },
+    "ดึง Refresh Token": {
+      "main": [[{"node": "Refresh TikTok Token", "type": "main", "index": 0}]]
+    },
+    "Refresh TikTok Token": {
+      "main": [[{"node": "แปลง Token ใหม่", "type": "main", "index": 0}]]
+    },
+    "แปลง Token ใหม่": {
+      "main": [[{"node": "เขียน Token ใหม่ลง Sheet", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "instanceId": "kaoshop"
+  },
+  "id": "kaoshop-tiktok-token-refresh",
+  "tags": []
+}
