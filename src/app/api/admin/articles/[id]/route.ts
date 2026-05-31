@@ -33,6 +33,8 @@ export async function PUT(
   const { id } = await params;
   const body = await request.json();
 
+  const existing = await prisma.article.findUnique({ where: { id: parseInt(id) } });
+
   const article = await prisma.article.update({
     where: { id: parseInt(id) },
     data: {
@@ -54,6 +56,25 @@ export async function PUT(
     },
     include: { category: true },
   });
+
+  // trigger social media webhook เมื่อ publish ครั้งแรก
+  if (body.published === true && existing && !existing.published) {
+    const webhookUrl = "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-social-v1";
+    const payload = {
+      title: article.title,
+      slug: article.slug,
+      summary: article.excerpt || "",
+      rating: article.rating?.toString() || "",
+      price: article.price || "",
+      featuredImage: article.featuredImage || "",
+      affiliateUrl: article.affiliateUrl || "",
+    };
+    fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  }
 
   return Response.json(article);
 }
