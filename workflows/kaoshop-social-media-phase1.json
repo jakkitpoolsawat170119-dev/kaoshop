@@ -110,6 +110,16 @@
     },
     {
       "parameters": {
+        "jsCode": "const linePayload = $('แปลง Caption').first().json.linePayload;\nreturn [{ json: { lineBodyStr: JSON.stringify(linePayload) } }];"
+      },
+      "id": "node-prepare-line",
+      "name": "เตรียม Line Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://api.line.me/v2/bot/message/broadcast",
         "sendHeaders": true,
@@ -123,14 +133,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($('แปลง Caption').first().json.linePayload) }}",
+        "jsonBody": "={{ $json.lineBodyStr }}",
         "options": {}
       },
       "id": "node-line",
       "name": "Broadcast Line OA",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1560, 300],
+      "position": [1780, 300],
       "onError": "continueRegularOutput"
     },
     {
@@ -155,7 +165,7 @@
       "name": "Trigger TikTok Phase 2",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1780, 300],
+      "position": [2000, 300],
       "onError": "continueRegularOutput"
     },
     {
@@ -167,7 +177,7 @@
       "name": "Respond Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [2000, 300]
+      "position": [2220, 300]
     }
   ],
   "connections": {
@@ -187,6 +197,9 @@
       "main": [[{"node": "โพสต์ Facebook Page", "type": "main", "index": 0}]]
     },
     "โพสต์ Facebook Page": {
+      "main": [[{"node": "เตรียม Line Body", "type": "main", "index": 0}]]
+    },
+    "เตรียม Line Body": {
       "main": [[{"node": "Broadcast Line OA", "type": "main", "index": 0}]]
     },
     "Broadcast Line OA": {
