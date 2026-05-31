@@ -738,7 +738,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "REPLACE_WITH_N8N_SOCIAL_WEBHOOK_URL",
+        "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-social-v1",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -749,9 +749,9 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($json) }}",
-        "options": {}
+        "specifyBody": "string",
+        "options": {},
+        "body": "={{ JSON.stringify($json) }}"
       },
       "id": "node-social-media-call",
       "name": "โพสต์ Social Media1",

@@ -17,7 +17,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 300);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price } }];"
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 300);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl } }];"
       },
       "id": "node-prepare",
       "name": "เตรียม Content",
@@ -145,6 +145,80 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-has-video",
+              "leftValue": "={{ $('เตรียม Content').first().json.videoUrl }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-video",
+      "name": "มี Video URL?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('เตรียม Content').first().json;\nreturn [{ json: { bodyStr: JSON.stringify({ title: d.title, slug: d.slug, summary: d.summary, rating: d.rating, price: d.price, featuredImage: d.featuredImage, affiliateUrl: d.affiliateUrl, videoUrl: d.videoUrl }) } }];"
+      },
+      "id": "node-prepare-tiktok-video",
+      "name": "เตรียม TikTok Video Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-tiktok-video-v1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.bodyStr }}",
+        "options": {}
+      },
+      "id": "node-trigger-tiktok-video",
+      "name": "Trigger TikTok Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 160],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('เตรียม Content').first().json;\nreturn [{ json: { bodyStr: JSON.stringify({ title: d.title, slug: d.slug, summary: d.summary, rating: d.rating, price: d.price, featuredImage: d.featuredImage, affiliateUrl: d.affiliateUrl }) } }];"
+      },
+      "id": "node-prepare-tiktok-photo",
+      "name": "เตรียม TikTok Photo Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 440]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-tiktok-v1",
         "sendHeaders": true,
@@ -157,15 +231,15 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ title: $('เตรียม Content').first().json.title, slug: $('เตรียม Content').first().json.slug, summary: $('เตรียม Content').first().json.summary, rating: $('เตรียม Content').first().json.rating, price: $('เตรียม Content').first().json.price, featuredImage: $('เตรียม Content').first().json.featuredImage, affiliateUrl: $('เตรียม Content').first().json.affiliateUrl }) }}",
+        "specifyBody": "string",
+        "body": "={{ $json.bodyStr }}",
         "options": {}
       },
       "id": "node-trigger-tiktok",
       "name": "Trigger TikTok Phase 2",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2000, 300],
+      "position": [2440, 440],
       "onError": "continueRegularOutput"
     },
     {
@@ -177,7 +251,7 @@
       "name": "Respond Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [2220, 300]
+      "position": [2660, 300]
     }
   ],
   "connections": {
@@ -203,6 +277,21 @@
       "main": [[{"node": "Broadcast Line OA", "type": "main", "index": 0}]]
     },
     "Broadcast Line OA": {
+      "main": [[{"node": "มี Video URL?", "type": "main", "index": 0}]]
+    },
+    "มี Video URL?": {
+      "main": [
+        [{"node": "เตรียม TikTok Video Body", "type": "main", "index": 0}],
+        [{"node": "เตรียม TikTok Photo Body", "type": "main", "index": 0}]
+      ]
+    },
+    "เตรียม TikTok Video Body": {
+      "main": [[{"node": "Trigger TikTok Video", "type": "main", "index": 0}]]
+    },
+    "Trigger TikTok Video": {
+      "main": [[{"node": "Respond Webhook", "type": "main", "index": 0}]]
+    },
+    "เตรียม TikTok Photo Body": {
       "main": [[{"node": "Trigger TikTok Phase 2", "type": "main", "index": 0}]]
     },
     "Trigger TikTok Phase 2": {
@@ -213,7 +302,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "2",
+  "versionId": "3",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "kaoshop"
