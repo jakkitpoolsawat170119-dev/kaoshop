@@ -27,13 +27,47 @@
     },
     {
       "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1ky12Dhady4SmgF06EjwrpswqQntIhNH2pm_n2QR7TQI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "filtersUI": {},
+        "options": {
+          "range": "A2:C2"
+        }
+      },
+      "id": "node-read-token",
+      "name": "อ่าน Access Token",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\nconst accessToken = row.access_token || row['A'] || '';\nif (!accessToken) throw new Error('access_token not found in Google Sheet');\nconst prepData = $('เตรียม Content').first().json;\nreturn [{ json: { ...prepData, accessToken } }];"
+      },
+      "id": "node-extract-token",
+      "name": "ดึง Access Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
         "jsCode": "const data = $input.first().json;\n\nconst prompt = `สร้าง TikTok caption จากสินค้าต่อไปนี้:\\n\\nชื่อสินค้า: ${data.title}\\nสรุป: ${data.summary || ''}\\nคะแนน: ${data.rating}/5\\nราคา: ฿${data.price || 'ไม่ระบุ'}\\nลิงก์บทความ: ${data.articleUrl}\\n\\nส่งกลับเป็น JSON เท่านั้น:\\n{\\n  \"caption\": \"caption TikTok ภาษาไทย กระชับ 50-80 คำ เน้น hook แรก น่าสนใจ + hashtag 5-8 ตัวท้าย รวม #KaoShop #รีวิวสินค้า\"\\n}`;\n\nconst openAIPayload = {\n  model: 'gpt-4o-mini',\n  response_format: { type: 'json_object' },\n  messages: [\n    {\n      role: 'system',\n      content: 'คุณเป็น TikTok Content Creator ผู้เชี่ยวชาญ content ภาษาไทย ตอบกลับเป็น JSON เท่านั้น'\n    },\n    {\n      role: 'user',\n      content: prompt\n    }\n  ]\n};\n\nreturn [{ json: { openAIPayload, ...data } }];"
       },
       "id": "node-build-prompt",
       "name": "สร้าง TikTok Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [680, 300]
+      "position": [1120, 300]
     },
     {
       "parameters": {
@@ -59,17 +93,17 @@
       "name": "GPT สร้าง Caption",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [900, 300]
+      "position": [1340, 300]
     },
     {
       "parameters": {
-        "jsCode": "const gpt = $input.first().json;\nconst prepData = $('เตรียม Content').first().json;\n\nlet caption = '';\n\ntry {\n  const content = gpt.choices[0].message.content;\n  const parsed = JSON.parse(content);\n  caption = parsed.caption || '';\n} catch(e) {\n  caption = '🛒 ' + prepData.title + (prepData.rating ? ' ⭐' + prepData.rating + '/5' : '') + ' #KaoShop #รีวิวสินค้า #ช้อปออนไลน์';\n}\n\nconst tiktokPayload = {\n  post_info: {\n    title: caption,\n    privacy_level: 'SELF_ONLY',\n    disable_duet: false,\n    disable_comment: false,\n    disable_stitch: false\n  },\n  source_info: {\n    source: 'PULL_FROM_URL',\n    photo_cover_index: 0,\n    photo_images: [prepData.featuredImage]\n  },\n  post_mode: 'DIRECT_POST',\n  media_type: 'PHOTO'\n};\n\nreturn [{ json: { ...prepData, caption, tiktokPayload } }];"
+        "jsCode": "const gpt = $input.first().json;\nconst prepData = $('ดึง Access Token').first().json;\n\nlet caption = '';\n\ntry {\n  const content = gpt.choices[0].message.content;\n  const parsed = JSON.parse(content);\n  caption = parsed.caption || '';\n} catch(e) {\n  caption = '🛒 ' + prepData.title + (prepData.rating ? ' ⭐' + prepData.rating + '/5' : '') + ' #KaoShop #รีวิวสินค้า #ช้อปออนไลน์';\n}\n\nconst tiktokPayload = {\n  post_info: {\n    title: caption,\n    privacy_level: 'SELF_ONLY',\n    disable_duet: false,\n    disable_comment: false,\n    disable_stitch: false\n  },\n  source_info: {\n    source: 'PULL_FROM_URL',\n    photo_cover_index: 0,\n    photo_images: [prepData.featuredImage]\n  },\n  post_mode: 'DIRECT_POST',\n  media_type: 'PHOTO'\n};\n\nreturn [{ json: { ...prepData, caption, tiktokPayload } }];"
       },
       "id": "node-parse-caption",
       "name": "แปลง TikTok Caption",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1120, 300]
+      "position": [1560, 300]
     },
     {
       "parameters": {
@@ -80,7 +114,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer act.eryozZ4QNptsGXWF9r4CDzKAp8uNSXBFHCfxgKQDVENKY9akfPK18oCJ2DYgI6343.s1"
+              "value": "=Bearer {{ $('ดึง Access Token').first().json.accessToken }}"
             },
             {
               "name": "Content-Type",
@@ -97,7 +131,7 @@
       "name": "โพสต์ TikTok",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1340, 300],
+      "position": [1780, 300],
       "onError": "continueRegularOutput"
     },
     {
@@ -109,7 +143,7 @@
       "name": "Respond Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1560, 300]
+      "position": [2000, 300]
     }
   ],
   "connections": {
@@ -117,6 +151,12 @@
       "main": [[{"node": "เตรียม Content", "type": "main", "index": 0}]]
     },
     "เตรียม Content": {
+      "main": [[{"node": "อ่าน Access Token", "type": "main", "index": 0}]]
+    },
+    "อ่าน Access Token": {
+      "main": [[{"node": "ดึง Access Token", "type": "main", "index": 0}]]
+    },
+    "ดึง Access Token": {
       "main": [[{"node": "สร้าง TikTok Prompt", "type": "main", "index": 0}]]
     },
     "สร้าง TikTok Prompt": {
@@ -136,7 +176,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "1",
+  "versionId": "2",
   "meta": {
     "instanceId": "kaoshop"
   },
