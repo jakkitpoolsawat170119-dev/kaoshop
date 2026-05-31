@@ -135,6 +135,31 @@
     },
     {
       "parameters": {
+        "method": "POST",
+        "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-tiktok-v1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ title: $('เตรียม Content').first().json.title, slug: $('เตรียม Content').first().json.slug, summary: $('เตรียม Content').first().json.summary, rating: $('เตรียม Content').first().json.rating, price: $('เตรียม Content').first().json.price, featuredImage: $('เตรียม Content').first().json.featuredImage, affiliateUrl: $('เตรียม Content').first().json.affiliateUrl }) }}",
+        "options": {}
+      },
+      "id": "node-trigger-tiktok",
+      "name": "Trigger TikTok Phase 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 300],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
         "respondWith": "json",
         "responseBody": "={{ JSON.stringify({ success: true, facebook: $('โพสต์ Facebook Page').first().json, line: $('Broadcast Line OA').first().json }) }}"
       },
@@ -142,7 +167,7 @@
       "name": "Respond Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
-      "position": [1780, 300]
+      "position": [2000, 300]
     }
   ],
   "connections": {
@@ -165,6 +190,9 @@
       "main": [[{"node": "Broadcast Line OA", "type": "main", "index": 0}]]
     },
     "Broadcast Line OA": {
+      "main": [[{"node": "Trigger TikTok Phase 2", "type": "main", "index": 0}]]
+    },
+    "Trigger TikTok Phase 2": {
       "main": [[{"node": "Respond Webhook", "type": "main", "index": 0}]]
     }
   },
