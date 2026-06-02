@@ -781,6 +781,7 @@
           ]
         },
         "sendBody": true,
+        "contentType": "raw",
         "specifyBody": "string",
         "body": "={{ JSON.stringify({ q: $('เตรียมข้อมูล').first().json['product_name'] + ' สเปค คุณสมบัติ ข้อมูลจำเพาะ', gl: 'th', hl: 'th', num: 5 }) }}",
         "options": {}
