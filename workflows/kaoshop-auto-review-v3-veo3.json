@@ -252,7 +252,7 @@
               "content": "คุณคือนักวิจัยสินค้า งานของคุณคือสร้าง \"research brief\" ที่ระบุประเด็นสำคัญที่ผู้ซื้อสินค้านี้อยากรู้จริงๆ ตอบเป็น bullet points กระชับ ภาษาไทย ไม่ต้องเขียนบทความ"
             },
             {
-              "content": "=คุณคือนักวิจัยสินค้า งานของคุณคือสร้าง \"research brief\" ที่ระบุประเด็นสำคัญที่ผู้ซื้อสินค้านี้อยากรู้จริงๆ ตอบเป็น bullet points กระชับ ภาษาไทย ไม่ต้องเขียนบทความ"
+              "content": "={{ `วิจัยสินค้า: ${$('เตรียมข้อมูล').first().json['product_name']}\nหมวด: ${$('เตรียมข้อมูล').first().json['category']}\nราคา: ${$('เตรียมข้อมูล').first().json['price']} บาท\n\n--- ข้อมูลสเปคจาก Web Search ---\n${$('แยกผล Serper').first().json.specsContext || 'ไม่พบข้อมูลสเปค'}\n------------------------------\n\nสร้าง research brief ที่ครอบคลุม:\n• สเปคที่สำคัญที่สุด\n• จุดเด่นและจุดด้อยที่ผู้ซื้อควรรู้\n• เปรียบเทียบความคุ้มราคา\n• ใครควรซื้อ ใครไม่ควรซื้อ` }}"
             }
           ]
         },
@@ -285,7 +285,7 @@
               "content": "คุณคือนักเขียนรีวิวสินค้ามืออาชีพของ KaoShop เว็บไซต์รีวิวสินค้าภาษาไทย\n\nหลักการเขียน:\n- เขียนเป็นภาษาไทยที่เป็นธรรมชาติ อ่านง่าย เหมือนเพื่อนแนะนำกัน\n- ไม่ใช้ภาษาทางการหรือแข็งทื่อ\n- ให้ข้อมูลที่เป็นประโยชน์จริงๆ ไม่ใช่แค่สรรเสริญสินค้า\n- ระบุข้อด้อยตามจริง เพื่อให้ผู้อ่านตัดสินใจได้\n- ความยาวบทความ 400-600 คำ\n\nส่งผลลัพธ์เป็น JSON ตามโครงสร้างที่กำหนดเท่านั้น ห้ามเพิ่มข้อความนอก JSON"
             },
             {
-              "content": "={{ (() => { const cat = $('เตรียมข้อมูล').first().json['category'] || ''; const research = $('Research Agent1').first().json.output[0].content[0].text; const style = cat.includes('หูฟัง') ? 'เน้น: คุณภาพเสียง (bass/treble/soundstage), ANC, ความสบายใส่นาน, อายุแบต, latency' : cat.includes('สุขภาพ') ? 'เน้น: ประสิทธิผลจริง, ความปลอดภัย, วิธีใช้ที่ถูกต้อง, ข้อควรระวัง' : cat.includes('หนังสือ') ? 'เน้น: เนื้อหาครอบคลุมแค่ไหน, เหมาะกับระดับไหน, สไตล์การเขียน, นำไปใช้จริงได้ไหม' : 'เน้น: สเปค/ประสิทธิภาพจริง, ความคุ้มราคา, เปรียบเทียบคู่แข่ง, ใครควรซื้อ'; return `เขียนรีวิวสินค้าภาษาไทยสำหรับ: ${$('เตรียมข้อมูล').first().json['product_name']}\nหมวด: ${cat} | ราคา: ${$('เตรียมข้อมูล').first().json['price']} บาท\n\n--- Research Brief ---\n${research}\n---------------------\n\n${style}\n\nความยาว 600-800 คำ รูปแบบ HTML (ใช้ h2, p, ul)\nขึ้นต้นด้วย <div class=\"quick-take\">สรุปสั้น 2 ประโยค</div>\nจากนั้นแบ่ง 3-4 หัวข้อที่เจาะลึกประเด็นจาก research brief`; })()\n}}"
+              "content": "={{ (() => { const cat = $('เตรียมข้อมูล').first().json['category'] || ''; const research = $('Research Agent1').first().json.output[0].content[0].text; const specs = $('แยกผล Serper').first().json.specsContext || ''; const style = cat.includes('หูฟัง') ? 'เน้น: คุณภาพเสียง (bass/treble/soundstage), ANC, ความสบายใส่นาน, อายุแบต, latency' : cat.includes('สุขภาพ') ? 'เน้น: ประสิทธิผลจริง, ความปลอดภัย, วิธีใช้ที่ถูกต้อง, ข้อควรระวัง' : cat.includes('หนังสือ') ? 'เน้น: เนื้อหาครอบคลุมแค่ไหน, เหมาะกับระดับไหน, สไตล์การเขียน, นำไปใช้จริงได้ไหม' : 'เน้น: สเปค/ประสิทธิภาพจริง, ความคุ้มราคา, เปรียบเทียบคู่แข่ง, ใครควรซื้อ'; return `เขียนรีวิวสินค้าภาษาไทยสำหรับ: ${$('เตรียมข้อมูล').first().json['product_name']}\\nหมวด: ${cat} | ราคา: ${$('เตรียมข้อมูล').first().json['price']} บาท\\n\\n--- Research Brief ---\\n${research}\\n---------------------\\n\\n--- ข้อมูลสเปคจริงจากเว็บ ---\\n${specs}\\n------------------------------\\n\\n${style}\\n\\nความยาว 600-800 คำ รูปแบบ HTML (ใช้ h2, p, ul)\\nขึ้นต้นด้วย <div class=\\\"quick-take\\\">สรุปสั้น 2 ประโยค พร้อม hook ดึงดูดคนอ่าน</div>\\nจากนั้นแบ่ง 3-4 หัวข้อที่เจาะลึกประเด็นจาก research brief\\n\\nเพิ่มหัวข้อ <h2>ควรซื้อถ้า...</h2> และ <h2>ไม่ควรซื้อถ้า...</h2> ก่อนจบบทความ`; })()\n}}"
             }
           ]
         },
@@ -762,6 +762,51 @@
         -1600
       ],
       "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY",
+              "value": "REPLACE_WITH_SERPER_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ JSON.stringify({ q: $('เตรียมข้อมูล').first().json['product_name'] + ' สเปค คุณสมบัติ ข้อมูลจำเพาะ', gl: 'th', hl: 'th', num: 5 }) }}",
+        "options": {}
+      },
+      "id": "node-serper-search",
+      "name": "ค้นหาสเปค Serper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -16500,
+        -1800
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const serperData = $input.first().json;\nconst items = [\n  ...(serperData.organic || []).slice(0, 5),\n  ...(serperData.knowledgeGraph ? [{ title: serperData.knowledgeGraph.title, snippet: JSON.stringify(serperData.knowledgeGraph.attributes || {}), link: '' }] : [])\n];\nconst specsContext = items.map(r => `- ${r.title || ''}: ${r.snippet || ''}`).join('\\n').substring(0, 2000);\nconst productName = $('เตรียมข้อมูล').first().json['product_name'] || '';\nreturn [{ json: { specsContext, productName } }];"
+      },
+      "id": "node-serper-parse",
+      "name": "แยกผล Serper",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16280,
+        -1800
+      ]
     }
   ],
   "connections": {
@@ -847,7 +892,7 @@
       "main": [
         [
           {
-            "node": "Research Agent1",
+            "node": "ค้นหาสเปค Serper",
             "type": "main",
             "index": 0
           }
@@ -1009,6 +1054,28 @@
         [
           {
             "node": "อัพเดท Status Done1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ค้นหาสเปค Serper": {
+      "main": [
+        [
+          {
+            "node": "แยกผล Serper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แยกผล Serper": {
+      "main": [
+        [
+          {
+            "node": "Research Agent1",
             "type": "main",
             "index": 0
           }
