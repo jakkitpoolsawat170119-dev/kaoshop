@@ -8,7 +8,8 @@
       "Bash(turso --version)",
       "Bash(vercel --version)",
       "WebFetch(domain:www.rtings.com)",
-      "Bash(npx prisma:*)"
+      "Bash(npx prisma:*)",
+      "mcp__e46a1c59-afaf-4037-b875-27728f2e1e6f__read_file_content"
     ]
   }
 }
