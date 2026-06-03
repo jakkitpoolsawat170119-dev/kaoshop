@@ -9,7 +9,8 @@
       "Bash(vercel --version)",
       "WebFetch(domain:www.rtings.com)",
       "Bash(npx prisma:*)",
-      "mcp__e46a1c59-afaf-4037-b875-27728f2e1e6f__read_file_content"
+      "mcp__e46a1c59-afaf-4037-b875-27728f2e1e6f__read_file_content",
+      "mcp__27b7745c-72f6-47d1-a98b-55ec54d07775__notion-update-page"
     ]
   }
 }
