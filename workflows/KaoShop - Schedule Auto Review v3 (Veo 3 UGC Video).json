@@ -1,0 +1,2164 @@
+{
+  "name": "KaoShop - Schedule Auto Review v3 (Veo 3 UGC Video)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "6372724d-5d2a-42ec-b6a6-728cf0dfba5b",
+      "name": "ทุกวัน 08:00 น.1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -8512,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1n51ZJzoQ4nZNCqu9HOQ-qgA1X8K_-ZIkalwtnGPfgfQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ชีต1",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "1e21a463-2ef9-40b7-b9f5-3443b200dcd5",
+      "name": "อ่าน Google Sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -8288,
+        -544
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst pending = items.filter(item => (item.json['Status'] || '').toLowerCase().trim() === 'pending');\nif (pending.length === 0) { console.log('ไม่มีสินค้าที่รอสร้างบทความ'); return []; }\nconsole.log(`พบ ${pending.length} สินค้าที่รอสร้างบทความ`);\nreturn pending;"
+      },
+      "id": "2672816d-a018-4fb4-8627-f75085c9f04b",
+      "name": "กรองรายการ pending1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8064,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1eeb1b76-0045-4d28-8afd-17fa69a3e6a6",
+      "name": "วนทีละสินค้า1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -7840,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "product_name",
+              "value": "=={{ $json['ชื่อสินค้า'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2",
+              "name": "price",
+              "value": "=={{ $json['ราคา'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3",
+              "name": "category",
+              "value": "={{ $json['หมวดหมู่'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4",
+              "name": "highlights",
+              "value": "={{ $json['จุดเด่น'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5",
+              "name": "affiliate_url",
+              "value": "={{ $json['Affiliate URL'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6",
+              "name": "=image_url",
+              "value": "={{ $json['image_url'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7",
+              "name": "row_number",
+              "value": "=={{ $json.row_number }}",
+              "type": "string"
+            },
+            {
+              "id": "8",
+              "name": "image_url_2",
+              "value": "={{ $json['image_url_2'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9",
+              "name": "image_url_3",
+              "value": "={{ $json['image_url_3'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "name": "เตรียมข้อมูล",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -7616,
+        -624
+      ],
+      "id": "59a1e0d5-d57f-4097-b37f-f358e3fe764e"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ (() => { const c = [$json['image_url'],$json['image_url_2'],$json['image_url_3']]; for (const u of c) { const s = String(u||'').replace(/^=/,'').trim(); if (s && s.startsWith('http')) return s; } return ''; })() }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "แปลงรูป Cloudinary1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7392,
+        -624
+      ],
+      "id": "bf765485-378a-4aac-901a-cda88e522efc"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $('เตรียมข้อมูล').first().json['image_url_2'] }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "แปลงรูป Cloudinary4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7168,
+        -624
+      ],
+      "id": "f5c67b5d-a6a2-44f9-96f7-627057526e3d",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/image/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $('เตรียมข้อมูล').first().json['image_url_3'] }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "แปลงรูป Cloudinary5",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6944,
+        -624
+      ],
+      "id": "d71afb14-7a4d-464f-bc08-8030f27e0928",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "คุณคือนักวิจัยสินค้า งานของคุณคือสร้าง \"research brief\" ที่ระบุประเด็นสำคัญที่ผู้ซื้อสินค้านี้อยากรู้จริงๆ ตอบเป็น bullet points กระชับ ภาษาไทย ไม่ต้องเขียนบทความ"
+            },
+            {
+              "content": "={{ `วิจัยสินค้า: ${$('เตรียมข้อมูล').first().json['product_name']}\nหมวด: ${$('เตรียมข้อมูล').first().json['category']}\nราคา: ${$('เตรียมข้อมูล').first().json['price']} บาท\n\n--- ข้อมูลสเปคจาก Web Search ---\n${$('แยกผล Serper').first().json.specsContext || 'ไม่พบข้อมูลสเปค'}\n------------------------------\n\nสร้าง research brief ที่ครอบคลุม:\n• สเปคที่สำคัญที่สุด\n• จุดเด่นและจุดด้อยที่ผู้ซื้อควรรู้\n• เปรียบเทียบความคุ้มราคา\n• ใครควรซื้อ ใครไม่ควรซื้อ` }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -6272,
+        -624
+      ],
+      "id": "f99de79e-e5a0-4006-adfa-661a31b583a6",
+      "name": "Research Agent1",
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "model": "gpt-4o",
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "คุณคือนักเขียนรีวิวสินค้ามืออาชีพของ KaoShop เว็บไซต์รีวิวสินค้าภาษาไทย\n\nหลักการเขียน:\n- เขียนเป็นภาษาไทยที่เป็นธรรมชาติ อ่านง่าย เหมือนเพื่อนแนะนำกัน\n- ไม่ใช้ภาษาทางการหรือแข็งทื่อ\n- ให้ข้อมูลที่เป็นประโยชน์จริงๆ ไม่ใช่แค่สรรเสริญสินค้า\n- ระบุข้อด้อยตามจริง เพื่อให้ผู้อ่านตัดสินใจได้\n- ความยาวบทความ 400-600 คำ\n\nส่งผลลัพธ์เป็น JSON ตามโครงสร้างที่กำหนดเท่านั้น ห้ามเพิ่มข้อความนอก JSON"
+            },
+            {
+              "content": "={{ (() => { const cat = $('เตรียมข้อมูล').first().json['category'] || ''; const research = $('Research Agent1').first().json.output[0].content[0].text; const specs = $('แยกผล Serper').first().json.specsContext || ''; const style = cat.includes('หูฟัง') ? 'เน้น: คุณภาพเสียง (bass/treble/soundstage), ANC, ความสบายใส่นาน, อายุแบต, latency' : cat.includes('สุขภาพ') ? 'เน้น: ประสิทธิผลจริง, ความปลอดภัย, วิธีใช้ที่ถูกต้อง, ข้อควรระวัง' : cat.includes('หนังสือ') ? 'เน้น: เนื้อหาครอบคลุมแค่ไหน, เหมาะกับระดับไหน, สไตล์การเขียน, นำไปใช้จริงได้ไหม' : 'เน้น: สเปค/ประสิทธิภาพจริง, ความคุ้มราคา, เปรียบเทียบคู่แข่ง, ใครควรซื้อ'; return `เขียนรีวิวสินค้าภาษาไทยสำหรับ: ${$('เตรียมข้อมูล').first().json['product_name']}\\nหมวด: ${cat} | ราคา: ${$('เตรียมข้อมูล').first().json['price']} บาท\\n\\n--- Research Brief ---\\n${research}\\n---------------------\\n\\n--- ข้อมูลสเปคจริงจากเว็บ ---\\n${specs}\\n------------------------------\\n\\n${style}\\n\\nความยาว 600-800 คำ รูปแบบ HTML (ใช้ h2, p, ul)\\nขึ้นต้นด้วย <div class=\\\"quick-take\\\">สรุปสั้น 2 ประโยค พร้อม hook ดึงดูดคนอ่าน</div>\\nจากนั้นแบ่ง 3-4 หัวข้อที่เจาะลึกประเด็นจาก research brief\\n\\nเพิ่มหัวข้อ <h2>ควรซื้อถ้า...</h2> และ <h2>ไม่ควรซื้อถ้า...</h2> ก่อนจบบทความ`; })()\n}}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 2500,
+          "temperature": 0.7
+        },
+        "requestOptions": {}
+      },
+      "id": "9528fb57-877f-4b5c-8b31-8fba6f8e5a8d",
+      "name": "GPT-4o เขียนรีวิว1",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        -5920,
+        -624
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "onuuENWoQxU73E2J",
+          "name": "OpenAi account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "คุณเป็น Senior Product Editor ผู้เชี่ยวชาญด้านการเขียนรีวิวสินค้าภาษาไทย\n\nงานของคุณ:\n1. ปรับแต่งบทความรีวิวให้อ่านง่าย น่าสนใจ และเป็นธรรมชาติ\n2. ให้คะแนนสินค้าอย่างตรงไปตรงมาตามข้อมูลที่มี\n3. คิดชื่อบทความที่ดึงดูดผู้อ่าน กระตุ้นให้คลิก\n\nตอบเป็น JSON เท่านั้น ห้ามมี markdown code block ห้ามมีข้อความอื่นนอก JSON:\n{\n  \"title\": \"ชื่อบทความดึงดูด\",\n  \"content\": \"เนื้อหา HTML ที่ปรับแต่งแล้ว\",\n  \"rating\": คะแนน 0.0-5.0,\n  \"scoreBreakdown\": { \"value\": 0-10, \"quality\": 0-10, \"performance\": 0-10, \"design\": 0-10, \"ease\": 0-10 }\n}"
+            },
+            {
+              "content": "={{ $('GPT-4o เขียนรีวิว1').first().json.message.content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -5696,
+        -624
+      ],
+      "id": "20008f03-6aef-43c7-9805-1cfa5e276afe",
+      "name": "Editor Agent1",
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ดึง output จาก Editor Agent\nconst editorRaw = $('Editor Agent1').first().json;\nconst rawText = editorRaw.output?.[0]?.content?.[0]?.text || editorRaw.message?.content || '';\nconst cleaned = rawText.replace(/^```json\\n?/i,'').replace(/^```\\n?/i,'').replace(/\\n?```$/i,'').trim();\n\nlet editorResult = {};\ntry { editorResult = JSON.parse(cleaned); } catch(e) { editorResult = { content: cleaned }; }\n\nconst htmlContent = editorResult.content || cleaned;\nconst rating = editorResult.rating || null;\nconst scoreBreakdown = editorResult.scoreBreakdown || null;\nconst pros = Array.isArray(editorResult.pros) ? editorResult.pros : [];\nconst cons = Array.isArray(editorResult.cons) ? editorResult.cons : [];\n\n// ดึงข้อมูลจาก Sheet\nconst sheet = $('เตรียมข้อมูล').first().json;\nconst productName = (sheet['product_name'] || '').replace(/^=+/, '').trim();\nconst price = String(sheet['price'] || '').replace(/^=+/, '').trim();\nconst affiliateUrl = sheet['affiliate_url'] || '';\nconst categoryName = sheet['category'] || 'ทั่วไป';\n\n// ดึง Video URL — Cloudinary ถาวรก่อน, fallback ไป kie.ai/Veo 3 (ใช้ .last() เพื่อเอา poll รอบที่วิดีโอเสร็จ)\nlet videoUrl = null;\ntry {\n  const cloudinaryResp = $('Upload Video Cloudinary1').last().json;\n  videoUrl = cloudinaryResp?.secure_url || null;\n} catch(e) { console.log('Cloudinary resp error:', e.message); }\n\nif (!videoUrl) {\n  try {\n    const d = $('เช็คสถานะ Veo ').last().json?.data || {};\n    videoUrl = d?.response?.resultUrls?.[0]\n      || d?.resultUrls?.[0]\n      || d?.response?.resultUrl\n      || d?.resultUrl\n      || null;\n    if (!videoUrl && d?.response?.resultJson) {\n      try { const rj = JSON.parse(d.response.resultJson); videoUrl = rj?.resultUrls?.[0] || rj?.resultUrl || null; } catch(e) {}\n    }\n    if (!videoUrl) console.log('ไม่พบ Video URL ใน Veo response:', JSON.stringify(d).substring(0, 500));\n  } catch(e) { console.log('Veo resp error:', e.message); }\n}\n\nif (videoUrl) console.log('Video URL:', videoUrl);\n\n// ดึงรูปจาก Cloudinary\nconst img1 = $('แปลงรูป Cloudinary1').first().json?.secure_url || '';\nconst img2 = $('แปลงรูป Cloudinary4').first().json?.secure_url || '';\nconst img3 = $('แปลงรูป Cloudinary5').first().json?.secure_url || '';\nconst images = [img1, img2, img3].filter(Boolean);\n\nconst baseSlug = productName.toLowerCase().replace(/[^a-z0-9\\s-]/g,'').replace(/\\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').substring(0,60);\nconst slug = (baseSlug || 'article') + '-' + Date.now();\n\nconst title = editorResult.title || `รีวิว ${productName}${price ? ' ราคา ' + price + ' บาท' : ''}`;\nconst excerpt = `รีวิวครบ ${productName} พร้อมข้อดี-ข้อเสีย คะแนน ${rating ? rating.toFixed(1) : '?'}/5 และความคุ้มค่าราคา`;\n\nreturn [{\n  json: {\n    title, slug, excerpt,\n    content: htmlContent,\n    featuredImage: images[0] || null,\n    images,\n    rating, scoreBreakdown,\n    pros,\n    cons,\n    affiliateUrl,\n    price: String(price),\n    productName,\n    categoryName,\n    categorySlug: categoryName.toLowerCase().replace(/\\s+/g,'-'),\n    videoUrl: videoUrl || null,\n    published: true\n  }\n}];"
+      },
+      "id": "6737f41e-dfff-4a7e-96a7-2ea9ae543996",
+      "name": "เตรียม Payload1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3648,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://kaoshop-omega.vercel.app/api/articles",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer ks_d7c548ef8a5a25220f1da408bec2c2a15c982b32250de8e0c12efaa3369684c5"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "b592130d-96b9-49e3-a8b9-56e482d7cd6b",
+      "name": "POST ไปยัง KaoShop1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3424,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1n51ZJzoQ4nZNCqu9HOQ-qgA1X8K_-ZIkalwtnGPfgfQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ชีต1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('วนทีละสินค้า1').first().json.row_number }}\n\n",
+            "Status": "done",
+            "ชื่อสินค้า": "={{ $('อ่าน Google Sheet1').item.json['ชื่อสินค้า'] }}",
+            "ราคา": "={{ $('อ่าน Google Sheet1').item.json['ราคา'] }}",
+            "หมวดหมู่": "={{ $('อ่าน Google Sheet1').item.json['หมวดหมู่'] }}",
+            "Shopee URL": "={{ $('อ่าน Google Sheet1').item.json['Shopee URL'] }}",
+            "Affiliate URL": "={{ $('อ่าน Google Sheet1').item.json['Affiliate URL'] }}",
+            "image_url ": "={{ $('อ่าน Google Sheet1').item.json['image_url '] }}",
+            "image_url_2": "={{ $('อ่าน Google Sheet1').item.json.image_url_2 }}",
+            "image_url_3": "={{ $('อ่าน Google Sheet1').item.json.image_url_3 }}",
+            "จุดเด่น": "={{ $('อ่าน Google Sheet1').item.json['จุดเด่น'] }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Shopee URL",
+              "displayName": "Shopee URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ชื่อสินค้า",
+              "displayName": "ชื่อสินค้า",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ราคา",
+              "displayName": "ราคา",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "หมวดหมู่",
+              "displayName": "หมวดหมู่",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Affiliate URL",
+              "displayName": "Affiliate URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "image_url ",
+              "displayName": "image_url ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "image_url_2",
+              "displayName": "image_url_2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "image_url_3",
+              "displayName": "image_url_3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "จุดเด่น",
+              "displayName": "จุดเด่น",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "faf7d042-a4cd-4c96-ae08-afc2e263ac32",
+      "name": "อัพเดท Status Done1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -2976,
+        -544
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloudinary.com/v1_1/dpvavpgfi/video/upload",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $('เช็คสถานะ Veo ').last().json.data?.response?.resultUrls?.[0] || $('เช็คสถานะ Veo ').last().json.data?.resultUrls?.[0] || '' }}"
+            },
+            {
+              "name": "upload_preset",
+              "value": "kaoshop_style"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f6eb2824-2679-4ab9-9ce6-4dc165496d78",
+      "name": "Upload Video Cloudinary1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3872,
+        -624
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://google.serper.dev/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-KEY",
+              "value": "REPLACE_WITH_SERPER_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ JSON.stringify({ q: $('เตรียมข้อมูล').first().json['product_name'] + ' สเปค คุณสมบัติ ข้อมูลจำเพาะ', gl: 'th', hl: 'th', num: 5 }) }}",
+        "options": {}
+      },
+      "id": "fb778018-8c99-4863-9faf-9bc73bec52d1",
+      "name": "ค้นหาสเปค Serper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6720,
+        -624
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const serperData = $input.first().json;\nconst items = [\n  ...(serperData.organic || []).slice(0, 5),\n  ...(serperData.knowledgeGraph ? [{ title: serperData.knowledgeGraph.title, snippet: JSON.stringify(serperData.knowledgeGraph.attributes || {}), link: '' }] : [])\n];\nconst specsContext = items.map(r => `- ${r.title || ''}: ${r.snippet || ''}`).join('\\n').substring(0, 2000);\nconst productName = $('เตรียมข้อมูล').first().json['product_name'] || '';\nreturn [{ json: { specsContext, productName } }];"
+      },
+      "id": "3498e537-7c87-48bd-8b8c-d8440f89e612",
+      "name": "แยกผล Serper",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6496,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "คุณเป็นผู้กำกับและนักเขียน script วีดีโอรีวิวสินค้า UGC style สำหรับ TikTok/Reels ที่เชี่ยวชาญ\nตอบเป็น JSON เท่านั้น ไม่มี markdown code block ไม่มีข้อความอื่น"
+            },
+            {
+              "content": "={{ `สร้าง script วีดีโอรีวิวสั้น 15 วินาที สำหรับ:\n\nสินค้า: ${$('เตรียมข้อมูล').first().json.product_name}\nราคา: ${$('เตรียมข้อมูล').first().json.price} บาท\nหมวด: ${$('เตรียมข้อมูล').first().json.category}\nจุดเด่น: ${$('เตรียมข้อมูล').first().json.highlights}\nคะแนน: ${(() => { try { const r = $('Editor Agent1').first().json; const t = r.output?.[0]?.content?.[0]?.text || r.message?.content || '{}'; const c = t.replace(/^\\`\\`\\`json\\n?/i,'').replace(/\\n?\\`\\`\\`$/i,'').trim(); return JSON.parse(c).rating || '4.0'; } catch(e) { return '4.0'; } })()}/5\n\nตอบในรูปแบบ JSON นี้เท่านั้น:\n{\n  \"thaiScript\": \"บทพูดภาษาไทย 30-35 คำ เปิดด้วย hook ทันทีเช่น 'ชอบมากเลย...' หรือ 'ลองแล้วบอกเลย...' กระชับ น่าฟัง เหมือนรีวิวจริง ไม่ใช่โฆษณา จบด้วยชวนไปดูที่ KaoShop\",\n  \"videoDirection\": \"English: Describe the scene — what the Thai woman presenter looks like, what she is doing specifically with this product, her expression, background setting, lighting. Be specific to this product type.\"\n}` }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        -5344,
+        -624
+      ],
+      "id": "c6b05550-ebc9-4fa3-930b-a0d8aa18a62c",
+      "name": "GPT เขียน UGC Script",
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// แยก UGC Script จาก GPT และเตรียม Veo 3 request\nconst gptRaw = $('GPT เขียน UGC Script').first().json;\nconst rawText = gptRaw.output?.[0]?.content?.[0]?.text || gptRaw.message?.content || '';\nconst cleaned = rawText.replace(/^```json\\n?/i,'').replace(/^```\\n?/i,'').replace(/\\n?```$/i,'').trim();\n\nlet script = {};\ntry {\n  script = JSON.parse(cleaned);\n} catch(e) {\n  console.log('Parse error, using fallback:', e.message);\n  const sheet = $('เตรียมข้อมูล').first().json;\n  script = {\n    thaiScript: `ลองแล้วบอกเลย ${(sheet['product_name']||'').replace(/^=+/,'').trim()} คุ้มมากเลยนะ จุดเด่นชัดมาก ดูรีวิวเต็มที่ KaoShop ได้เลย`,\n    videoDirection: `Young Thai woman presenter reviewing a product, holding it up to camera, smiling naturally, bright clean background`\n  };\n}\n\nconst sheet = $('เตรียมข้อมูล').first().json;\nconst productName = (sheet['product_name'] || '').replace(/^=+/, '').trim();\nconst img1 = $('แปลงรูป Cloudinary1').first().json?.secure_url || '';\n\n// สร้าง Veo 3 prompt: รวม video direction + Thai dialogue\nconst videoPrompt = [\n  script.videoDirection,\n  `She looks at the camera and speaks naturally in Thai: \"${script.thaiScript}\"`,\n  'Generate with native Thai audio and perfect lip sync.',\n  'Bright professional lighting, 16:9 aspect ratio, UGC style, cinematic quality.'\n].join(' ');\n\nconsole.log(`UGC Script สำหรับ: ${productName}`);\nconsole.log(`Thai Script: ${script.thaiScript}`);\nconsole.log(`Image URL: ${img1}`);\n\nreturn [{\n  json: {\n    thaiScript: script.thaiScript,\n    videoPrompt,\n    imageUrl: img1,\n    productName\n  }\n}];"
+      },
+      "id": "b87a0c07-d16a-4bc7-82c7-f1d3f2948e5e",
+      "name": "แยก UGC Script",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4992,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.kie.ai/api/v1/veo/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 0018c572fa2ad6d2ea623b9a0ca5694f"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  prompt: $json.videoPrompt,\n  imageUrls: [$json.imageUrl],\n  model: 'veo3_fast',\n  watermark: false,\n  aspect_ratio: '16:9',\n  enableTranslation: false,\n  generationType: 'REFERENCE_2_VIDEO'\n}) }}",
+        "options": {}
+      },
+      "id": "0d6a248c-b0af-4b01-b2ed-038afdbccac0",
+      "name": "Veo 3 สร้างวีดีโอ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4768,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "c7f7b258-1036-4b47-967b-2a99ff20dd70",
+      "name": "รอ 60 วินาที (Veo3)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4544,
+        -624
+      ],
+      "webhookId": "c1d2e3f4-a5b6-7890-cdef-111122223333"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.kie.ai/api/v1/veo/record-info?taskId={{ $('Veo 3 สร้างวีดีโอ').first().json.data.taskId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 0018c572fa2ad6d2ea623b9a0ca5694f"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "86ffc8a6-5d9f-4429-9d19-814681324620",
+      "name": "เช็คสถานะ Veo ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4320,
+        -688
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-veo3-done",
+              "leftValue": "={{ $json.data.successFlag }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c598d636-1538-4822-913e-3ec176f96886",
+      "name": "ตรวจสอบ Veo3 เสร็จ",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -4096,
+        -624
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-social-v1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "9b4b06ba-1afe-4d97-80b7-63a5911f80f1",
+      "name": "โพสต์ Social Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3200,
+        -624
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 23
+            }
+          ]
+        }
+      },
+      "id": "170a5174-3309-4249-8956-ddadc3f5b52d",
+      "name": "ทุก 23 ชั่วโมง1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -8512,
+        -1552
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ky12Dhady4SmgF06EjwrpswqQntIhNH2pm_n2QR7TQI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "6ec93859-2c0a-4739-8a8e-9055947680b7",
+      "name": "อ่าน Token จาก Sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -8288,
+        -1552
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\nconst refreshToken = row.refresh_token || row['B'] || '';\nif (!refreshToken) throw new Error('refresh_token not found in Google Sheet');\nreturn [{ json: { refreshToken } }];"
+      },
+      "id": "4a6ad197-2155-4b4e-983b-eeda1330240b",
+      "name": "ดึง Refresh Token1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8064,
+        -1552
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/oauth/token/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "client_key",
+              "value": "awdln12az5qe5ekj"
+            },
+            {
+              "name": "client_secret",
+              "value": "m9OElj3NTO9kTIH9N1e7zLxDjx9Ha3sm"
+            },
+            {
+              "name": "grant_type",
+              "value": "refresh_token"
+            },
+            {
+              "name": "refresh_token",
+              "value": "={{ $json.refreshToken }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2a9b3ecf-35f4-4db8-834a-a04b3ed54616",
+      "name": "Refresh TikTok Token1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7840,
+        -1552
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\nif (!res.data || !res.data.access_token) {\n  throw new Error('TikTok refresh failed: ' + JSON.stringify(res));\n}\nconst now = new Date().toISOString();\nreturn [{ json: {\n  access_token: res.data.access_token,\n  refresh_token: res.data.refresh_token,\n  updated_at: now\n} }];"
+      },
+      "id": "c14e77a7-8c62-48c9-ab20-f24c3eaed39e",
+      "name": "แปลง Token ใหม่1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7616,
+        -1552
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ky12Dhady4SmgF06EjwrpswqQntIhNH2pm_n2QR7TQI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "access_token": "={{ $json.access_token }}",
+            "refresh_token": "={{ $json.refresh_token }}",
+            "updated_at": "={{ $json.updated_at }}"
+          },
+          "matchingColumns": [
+            "access_token"
+          ],
+          "schema": [
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": false,
+              "defaultMatch": true,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "refresh_token",
+              "displayName": "refresh_token",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string"
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": false,
+              "display": true,
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "269713ce-b31a-4772-93b5-07d8c68e33d5",
+      "name": "เขียน Token ใหม่ลง Sheet1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -7392,
+        -1552
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Token Refresh ",
+        "height": 288,
+        "width": 1824,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8816,
+        -1680
+      ],
+      "id": "fd6e2be4-6680-44bc-88dd-7922ada58f82",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Main Workflow ",
+        "height": 480,
+        "width": 5760
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8592,
+        -752
+      ],
+      "id": "a85b8989-1ded-4395-b320-31f7d4ae2a94",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "##  Phase 1 Facebook + Line + Trigger TikTok",
+        "height": 416,
+        "width": 3008,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8736,
+        -1392
+      ],
+      "id": "fcd0277d-567c-43b4-818a-a573250c2e5d",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Phase 2 TikTok ",
+        "height": 336,
+        "width": 2688,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -8800,
+        -1088
+      ],
+      "id": "733bb74d-83e4-4e5a-a12b-4646ecb79a16",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const linePayload = $('แปลง Caption').first().json.linePayload;\nreturn [{ json: linePayload }];"
+      },
+      "id": "7d01f418-6d38-42a4-84d9-0387aa922c1d",
+      "name": "เตรียม Line Body1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7168,
+        -1232
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-has-video",
+              "leftValue": "={{ $('เตรียม Content').first().json.videoUrl }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "323565ed-b269-457b-8008-dcb4b276896e",
+      "name": "มี Video URL?1",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -6720,
+        -1232
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('เตรียม Content').first().json;\nreturn [{ json: { bodyStr: JSON.stringify({ title: d.title, slug: d.slug, summary: d.summary, rating: d.rating, price: d.price, featuredImage: d.featuredImage, affiliateUrl: d.affiliateUrl, videoUrl: d.videoUrl }) } }];"
+      },
+      "id": "25643463-8757-4112-a075-4a69eca47eb5",
+      "name": "เตรียม TikTok Video Body1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6496,
+        -1328
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-tiktok-video-v1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.bodyStr }}",
+        "options": {}
+      },
+      "id": "709e7a3b-207e-4cd6-8501-c25e40d1ac5e",
+      "name": "Trigger TikTok Video1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6272,
+        -1328
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('เตรียม Content').first().json;\nreturn [{ json: { bodyStr: JSON.stringify({ title: d.title, slug: d.slug, summary: d.summary, rating: d.rating, price: d.price, featuredImage: d.featuredImage, affiliateUrl: d.affiliateUrl }) } }];"
+      },
+      "id": "bcdbf360-9334-42d0-b805-fea5f3136e0f",
+      "name": "เตรียม TikTok Photo Body1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6496,
+        -1136
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://n8n.srv1267366.hstgr.cloud/webhook/kaoshop-tiktok-v1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.bodyStr }}",
+        "options": {}
+      },
+      "id": "e7b50c1d-99d5-48f1-b773-f867f8b32fc7",
+      "name": "Trigger TikTok Phase ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6272,
+        -1136
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kaoshop-social-v1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "d2f07e35-3f0e-4039-859a-d8dc8c4675b1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -8512,
+        -1232
+      ],
+      "webhookId": "kaoshop-social-v1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nlet body = (raw && raw.body !== undefined) ? raw.body : raw;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) {} }\nif (body && typeof body === 'object' && body.title === undefined) {\n  const k = Object.keys(body);\n  if (k.length === 1 && String(k[0]).trim().startsWith('{')) { try { body = JSON.parse(k[0]); } catch (e) {} }\n}\nbody = body || {};\n\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 300);\nconst rating = (body.rating !== undefined && body.rating !== null) ? body.rating : '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst productName = body.productName || title;\nlet pros = [];\ntry { pros = Array.isArray(body.pros) ? body.pros : JSON.parse(body.pros || '[]'); } catch (e) { pros = []; }\nconst contentText = String(body.content || '').replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/gi, ' ').replace(/\\s+/g, ' ').trim().substring(0, 600);\nconst articleUrl = slug ? 'https://kaoshop-omega.vercel.app/article/' + slug : 'https://kaoshop-omega.vercel.app';\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl, productName, pros, contentText } }];"
+      },
+      "id": "b847efc1-cb59-419c-b193-231c667afaee",
+      "name": "เตรียม Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8288,
+        -1232
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prosText = (data.pros && data.pros.length) ? data.pros.join(', ') : '-';\n\nconst prompt = `สร้าง social media content จากข้อมูลรีวิวสินค้าจริงด้านล่าง โดยอ้างอิงเฉพาะข้อมูลที่ให้เท่านั้น ห้ามแต่งจุดเด่น/สเปค/ฟีเจอร์ที่ไม่มีในข้อมูล:\\n\\nชื่อสินค้า: ${data.productName || data.title}\\nหัวข้อบทความ: ${data.title}\\nคะแนนรีวิว: ${data.rating}/5\\nราคา: ฿${data.price || 'ไม่ระบุ'}\\nข้อดีหลัก: ${prosText}\\nสรุปรีวิว: ${data.summary || ''}\\nเนื้อหารีวิว (บางส่วน): ${data.contentText || ''}\\nลิงก์บทความ: ${data.articleUrl}\\n${data.affiliateUrl ? 'ลิงก์ซื้อสินค้า: ' + data.affiliateUrl : ''}\\n\\nส่งกลับเป็น JSON เท่านั้น:\\n{\\n  \\\"fbCaption\\\": \\\"caption Facebook ภาษาไทย 100-150 คำ พูดถึงสินค้าชิ้นนี้โดยตรง อ้างอิงข้อดี/เนื้อหาด้านบนเท่านั้น ทำให้น่าซื้อ ปิดท้ายด้วย hashtag 5-8 ตัว\\\",\\n  \\\"lineMessage\\\": \\\"ข้อความ Line กระชับไม่เกิน 100 ตัวอักษร อ้างอิงสินค้าจริง + emoji + CTA\\\"\\n}`;\n\nconst openAIPayload = {\n  model: 'gpt-4o-mini',\n  response_format: { type: 'json_object' },\n  messages: [\n    {\n      role: 'system',\n      content: 'คุณเป็น Social Media Manager ผู้เชี่ยวชาญ content ภาษาไทยสำหรับร้านรีวิวสินค้า เขียนโดยอ้างอิงเฉพาะข้อมูลที่ได้รับเท่านั้น ห้ามกุข้อมูลสินค้าที่ไม่มีจริง ตอบกลับเป็น JSON เท่านั้น'\n    },\n    {\n      role: 'user',\n      content: prompt\n    }\n  ]\n};\n\nreturn [{ json: { openAIPayload, ...data } }];"
+      },
+      "id": "fd93d8b6-0e11-4813-bac5-48a3b3d94463",
+      "name": "สร้าง GPT Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8064,
+        -1232
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openAIPayload) }}",
+        "options": {}
+      },
+      "id": "db01696f-b831-4118-9fbe-fa4adb918106",
+      "name": "GPT สร้าง Caption",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7840,
+        -1232
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const gpt = $input.first().json;\nconst prepData = $('เตรียม Content').first().json;\n\nlet fbCaption = '';\nlet lineMessage = '';\n\ntry {\n  const content = gpt.choices[0].message.content;\n  const parsed = JSON.parse(content);\n  fbCaption = parsed.fbCaption || '';\n  lineMessage = parsed.lineMessage || '';\n} catch(e) {\n  // fallback ถ้า GPT ไม่ส่ง JSON ถูกต้อง\n  fbCaption = '\\ud83d\\uded2 ' + prepData.title + (prepData.rating ? '\\n\\n\\u2b50 ' + prepData.rating + '/5' : '') + '\\n\\n\\ud83d\\udcd6 ' + prepData.articleUrl;\n  lineMessage = '\\ud83c\\udd95 ' + (prepData.title || 'บทความใหม่').substring(0, 60) + '... \\ud83d\\udc49 ' + prepData.articleUrl;\n}\n\nconst heroImage = prepData.featuredImage || 'https://placehold.co/800x520/FF6B00/ffffff?text=KaoShop';\nconst safeTitle = (prepData.title || 'บทความใหม่จาก KaoShop').substring(0, 60);\n\nconst linePayload = {\n  messages: [\n    {\n      type: 'flex',\n      altText: lineMessage || ('\\ud83d\\udccc \\u0e1a\\u0e17\\u0e04\\u0e27\\u0e32\\u0e21\\u0e43\\u0e2b\\u0e21\\u0e48: ' + safeTitle),\n      contents: {\n        type: 'bubble',\n        hero: {\n          type: 'image',\n          url: heroImage,\n          size: 'full',\n          aspectRatio: '20:13',\n          aspectMode: 'cover',\n          action: { type: 'uri', uri: prepData.articleUrl }\n        },\n        body: {\n          type: 'box',\n          layout: 'vertical',\n          contents: [\n            { type: 'text', text: '\\ud83c\\udd95 \\u0e1a\\u0e17\\u0e04\\u0e27\\u0e32\\u0e21\\u0e43\\u0e2b\\u0e21\\u0e48!', weight: 'bold', color: '#1DB446', size: 'sm' },\n            { type: 'text', text: safeTitle, weight: 'bold', size: 'xl', margin: 'md', wrap: true },\n            prepData.rating ? { type: 'text', text: '\\u2b50 ' + prepData.rating + '/5', size: 'sm', color: '#aaaaaa', margin: 'md' } : null,\n            lineMessage ? { type: 'text', text: lineMessage, size: 'sm', color: '#555555', margin: 'md', wrap: true } : null\n          ].filter(Boolean)\n        },\n        footer: {\n          type: 'box',\n          layout: 'vertical',\n          spacing: 'sm',\n          contents: [\n            {\n              type: 'button',\n              style: 'primary',\n              height: 'sm',\n              color: '#FF6B00',\n              action: { type: 'uri', label: '\\ud83d\\udcd6 \\u0e2d\\u0e48\\u0e32\\u0e19\\u0e23\\u0e35\\u0e27\\u0e34\\u0e27', uri: prepData.articleUrl }\n            },\n            prepData.affiliateUrl ? {\n              type: 'button',\n              style: 'secondary',\n              height: 'sm',\n              action: { type: 'uri', label: '\\ud83d\\udecd \\u0e0b\\u0e37\\u0e49\\u0e2d\\u0e40\\u0e25\\u0e22', uri: prepData.affiliateUrl }\n            } : null\n          ].filter(Boolean)\n        }\n      }\n    }\n  ]\n};\n\nreturn [{ json: { ...prepData, fbCaption, lineMessage, linePayload } }];"
+      },
+      "id": "05fac97d-7018-49e4-bd08-673c04d06469",
+      "name": "แปลง Caption",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7616,
+        -1232
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/1159125727278739/feed",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAMDE6gxZCEsBRiU3ZAnwcCFEqpr41WN4lsE8Bq1Sd0HL24KSEA92XjdBVnhcXGz0qoZANSU8LF61fQN7XqYmSXHaLocmI3cjonAEuv4TsKXapFadCKfkbQ23ViI73sNjdkPjAKpNZCqYiGIcmZAYFLKf6ENMRgd6M4Vzyiz0XaMGuQo6kghaJxj60kG1z32FZAzDtEXPE"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $json.fbCaption }}"
+            },
+            {
+              "name": "link",
+              "value": "={{ $json.articleUrl }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "223c05b6-6fc4-4b39-a505-96ae4cc8ebaf",
+      "name": "โพสต์ Facebook Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7392,
+        -1232
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/broadcast",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 9Xw857zFqoYFLn4W4IH4C4/0R10hU9uhcMwMTVvzBfJFx3/B+z/t8Xnb5HAlMRZcWqFKR9vq4GG3i2LqKpI5VCUAkai2cHkC6EezmmUwNck4M0HUFl75FhK+W2T6WdTaitPCbmgyy/hU0sr4N7rnQgdB04t89/1O/w1cDnyilFU="
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "23bf3565-7473-4845-b377-bfc891adcede",
+      "name": "Broadcast Line OA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6944,
+        -1232
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, facebook: $('โพสต์ Facebook Page').first().json, line: $('Broadcast Line OA').first().json }) }}",
+        "options": {}
+      },
+      "id": "1fe4b42e-b19b-4ee8-abea-669fd86bbae6",
+      "name": "Respond Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -6048,
+        -1232
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst prompt = `สร้าง TikTok video caption จากสินค้าต่อไปนี้:\\n\\nชื่อสินค้า: ${data.title}\\nสรุป: ${data.summary || ''}\\nคะแนน: ${data.rating}/5\\nราคา: ฿${data.price || 'ไม่ระบุ'}\\nลิงก์บทความ: ${data.articleUrl}\\n\\nนี่คือวีดีโอรีวิวสินค้าจริง ส่งกลับเป็น JSON เท่านั้น:\\n{\\n  \"caption\": \"caption TikTok ภาษาไทย กระชับ 50-80 คำ เน้น hook แรกดึงดูดความสนใจ บอกข้อดีสินค้า + hashtag 5-8 ตัวท้าย รวม #KaoShop #รีวิวสินค้า #ช้อปออนไลน์\"\\n}`;\n\nconst openAIPayload = {\n  model: 'gpt-4o-mini',\n  response_format: { type: 'json_object' },\n  messages: [\n    {\n      role: 'system',\n      content: 'คุณเป็น TikTok Content Creator ผู้เชี่ยวชาญ content ภาษาไทย ตอบกลับเป็น JSON เท่านั้น'\n    },\n    {\n      role: 'user',\n      content: prompt\n    }\n  ]\n};\n\nreturn [{ json: { openAIPayload, ...data } }];"
+      },
+      "id": "2db278a0-7056-4bd3-b9dd-0d8aa3edc4b1",
+      "name": "สร้าง TikTok Video Prompt1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7616,
+        -912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const gpt = $input.first().json;\nconst prepData = $('ดึง Access Token').first().json;\n\nlet caption = '';\n\ntry {\n  const content = gpt.choices[0].message.content;\n  const parsed = JSON.parse(content);\n  caption = parsed.caption || '';\n} catch(e) {\n  caption = '🛒 ' + prepData.title + (prepData.rating ? ' ⭐' + prepData.rating + '/5' : '') + ' #KaoShop #รีวิวสินค้า #ช้อปออนไลน์';\n}\n\nconst tiktokPayload = {\n  post_info: {\n    title: caption,\n    privacy_level: 'SELF_ONLY',\n    disable_duet: false,\n    disable_comment: false,\n    disable_stitch: false\n  },\n  source_info: {\n    source: 'PULL_FROM_URL',\n    video_url: prepData.videoUrl\n  },\n  post_mode: 'DIRECT_POST',\n  media_type: 'VIDEO'\n};\n\nreturn [{ json: { ...prepData, caption, tiktokPayload } }];"
+      },
+      "id": "ff0029fc-9032-4cba-b292-4f1b80f1089b",
+      "name": "แปลง TikTok Video Caption1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7168,
+        -912
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nreturn [{ json: { tiktokBodyStr: JSON.stringify(data.tiktokPayload), accessToken: data.accessToken } }];"
+      },
+      "id": "61eb4483-a851-4cef-998f-fe99a673a38a",
+      "name": "เตรียม TikTok Body1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6944,
+        -912
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/post/publish/content/init/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.accessToken }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json; charset=UTF-8"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "string",
+        "body": "={{ $json.tiktokBodyStr }}",
+        "options": {}
+      },
+      "id": "747095cc-aad8-40f9-9415-f378fbebe942",
+      "name": "โพสต์ TikTok Video1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6720,
+        -912
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kaoshop-tiktok-video-v1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "0f434aa0-101f-49b5-a0c4-b40eb2d43d56",
+      "name": "Webhook4",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -8512,
+        -912
+      ],
+      "webhookId": "kaoshop-tiktok-video-v1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nlet body = (raw && raw.body !== undefined) ? raw.body : raw;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) {} }\nif (body && typeof body === 'object' && body.title === undefined) {\n  const k = Object.keys(body);\n  if (k.length === 1 && String(k[0]).trim().startsWith('{')) { try { body = JSON.parse(k[0]); } catch (e) {} }\n}\nbody = body || {};\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 200);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || 'https://placehold.co/1080x1920/FF6B00/ffffff?text=KaoShop';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\nif (!videoUrl) throw new Error('videoUrl is required for TikTok Video workflow');\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl } }];"
+      },
+      "id": "9d5ce535-53ea-461c-b5c8-69049016af95",
+      "name": "เตรียม Content4",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -8288,
+        -912
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ky12Dhady4SmgF06EjwrpswqQntIhNH2pm_n2QR7TQI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "ccffbfd1-37e7-442b-9ded-763d5b8e3c61",
+      "name": "อ่าน Access Token",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -8064,
+        -912
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gKmYysQsNmcYuB9E",
+          "name": "GoogleAuth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const row = $input.first().json;\nconst accessToken = row.access_token || row['A'] || '';\nif (!accessToken) throw new Error('access_token not found in Google Sheet');\nconst prepData = $('เตรียม Content4').first().json;\nreturn [{ json: { ...prepData, accessToken } }];"
+      },
+      "id": "a81d4ce6-e4e8-456d-ae62-fa521f788a14",
+      "name": "ดึง Access Token",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -7840,
+        -912
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.openAIPayload) }}",
+        "options": {}
+      },
+      "id": "b8639f5b-c4dd-410e-ab5c-e1f8398444ef",
+      "name": "GPT สร้าง Caption4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -7392,
+        -912
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "fSQaYoRQ3WO4a3GJ",
+          "name": "OpenAi account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, tiktok: $('โพสต์ TikTok Video1').first().json, caption: $('แปลง TikTok Video Caption1').first().json.caption }) }}",
+        "options": {}
+      },
+      "id": "a4ca2d4c-8755-4880-adf2-644c00db54c8",
+      "name": "Respond Webhook4",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -6496,
+        -912
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "ทุกวัน 08:00 น.1": {
+      "main": [
+        [
+          {
+            "node": "อ่าน Google Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "อ่าน Google Sheet1": {
+      "main": [
+        [
+          {
+            "node": "กรองรายการ pending1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "กรองรายการ pending1": {
+      "main": [
+        [
+          {
+            "node": "วนทีละสินค้า1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "วนทีละสินค้า1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "เตรียมข้อมูล",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียมข้อมูล": {
+      "main": [
+        [
+          {
+            "node": "แปลงรูป Cloudinary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แปลงรูป Cloudinary1": {
+      "main": [
+        [
+          {
+            "node": "แปลงรูป Cloudinary4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แปลงรูป Cloudinary4": {
+      "main": [
+        [
+          {
+            "node": "แปลงรูป Cloudinary5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แปลงรูป Cloudinary5": {
+      "main": [
+        [
+          {
+            "node": "ค้นหาสเปค Serper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent1": {
+      "main": [
+        [
+          {
+            "node": "GPT-4o เขียนรีวิว1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o เขียนรีวิว1": {
+      "main": [
+        [
+          {
+            "node": "Editor Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editor Agent1": {
+      "main": [
+        [
+          {
+            "node": "GPT เขียน UGC Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม Payload1": {
+      "main": [
+        [
+          {
+            "node": "POST ไปยัง KaoShop1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST ไปยัง KaoShop1": {
+      "main": [
+        [
+          {
+            "node": "โพสต์ Social Media",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "อัพเดท Status Done1": {
+      "main": [
+        [
+          {
+            "node": "วนทีละสินค้า1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video Cloudinary1": {
+      "main": [
+        [
+          {
+            "node": "เตรียม Payload1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ค้นหาสเปค Serper": {
+      "main": [
+        [
+          {
+            "node": "แยกผล Serper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แยกผล Serper": {
+      "main": [
+        [
+          {
+            "node": "Research Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT เขียน UGC Script": {
+      "main": [
+        [
+          {
+            "node": "แยก UGC Script",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แยก UGC Script": {
+      "main": [
+        [
+          {
+            "node": "Veo 3 สร้างวีดีโอ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Veo 3 สร้างวีดีโอ": {
+      "main": [
+        [
+          {
+            "node": "รอ 60 วินาที (Veo3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "รอ 60 วินาที (Veo3)": {
+      "main": [
+        [
+          {
+            "node": "เช็คสถานะ Veo ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เช็คสถานะ Veo ": {
+      "main": [
+        [
+          {
+            "node": "ตรวจสอบ Veo3 เสร็จ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ตรวจสอบ Veo3 เสร็จ": {
+      "main": [
+        [
+          {
+            "node": "Upload Video Cloudinary1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "รอ 60 วินาที (Veo3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "โพสต์ Social Media": {
+      "main": [
+        [
+          {
+            "node": "อัพเดท Status Done1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ทุก 23 ชั่วโมง1": {
+      "main": [
+        [
+          {
+            "node": "อ่าน Token จาก Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "อ่าน Token จาก Sheet1": {
+      "main": [
+        [
+          {
+            "node": "ดึง Refresh Token1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ดึง Refresh Token1": {
+      "main": [
+        [
+          {
+            "node": "Refresh TikTok Token1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh TikTok Token1": {
+      "main": [
+        [
+          {
+            "node": "แปลง Token ใหม่1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แปลง Token ใหม่1": {
+      "main": [
+        [
+          {
+            "node": "เขียน Token ใหม่ลง Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม Line Body1": {
+      "main": [
+        [
+          {
+            "node": "Broadcast Line OA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "มี Video URL?1": {
+      "main": [
+        [
+          {
+            "node": "เตรียม TikTok Video Body1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "เตรียม TikTok Photo Body1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม TikTok Video Body1": {
+      "main": [
+        [
+          {
+            "node": "Trigger TikTok Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger TikTok Video1": {
+      "main": [
+        [
+          {
+            "node": "Respond Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม TikTok Photo Body1": {
+      "main": [
+        [
+          {
+            "node": "Trigger TikTok Phase ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger TikTok Phase ": {
+      "main": [
+        [
+          {
+            "node": "Respond Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "เตรียม Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม Content": {
+      "main": [
+        [
+          {
+            "node": "สร้าง GPT Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "สร้าง GPT Prompt": {
+      "main": [
+        [
+          {
+            "node": "GPT สร้าง Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT สร้าง Caption": {
+      "main": [
+        [
+          {
+            "node": "แปลง Caption",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แปลง Caption": {
+      "main": [
+        [
+          {
+            "node": "โพสต์ Facebook Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "โพสต์ Facebook Page": {
+      "main": [
+        [
+          {
+            "node": "เตรียม Line Body1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Broadcast Line OA": {
+      "main": [
+        [
+          {
+            "node": "มี Video URL?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "สร้าง TikTok Video Prompt1": {
+      "main": [
+        [
+          {
+            "node": "GPT สร้าง Caption4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "แปลง TikTok Video Caption1": {
+      "main": [
+        [
+          {
+            "node": "เตรียม TikTok Body1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม TikTok Body1": {
+      "main": [
+        [
+          {
+            "node": "โพสต์ TikTok Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "โพสต์ TikTok Video1": {
+      "main": [
+        [
+          {
+            "node": "Respond Webhook4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook4": {
+      "main": [
+        [
+          {
+            "node": "เตรียม Content4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เตรียม Content4": {
+      "main": [
+        [
+          {
+            "node": "อ่าน Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "อ่าน Access Token": {
+      "main": [
+        [
+          {
+            "node": "ดึง Access Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ดึง Access Token": {
+      "main": [
+        [
+          {
+            "node": "สร้าง TikTok Video Prompt1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT สร้าง Caption4": {
+      "main": [
+        [
+          {
+            "node": "แปลง TikTok Video Caption1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "efd9853a-eb68-45db-93d4-6a55308bad75",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21a28d363b1282ab9c0b35e07c5213c656bd9175ba2b796797fa7b0daedadf08"
+  },
+  "id": "kSzm0uKPyrhtWaeqUOF1i",
+  "tags": [
+    {
+      "updatedAt": "2026-05-27T10:13:13.064Z",
+      "createdAt": "2026-05-27T10:13:13.064Z",
+      "id": "jEwPekCmhPgup7So",
+      "name": "v3-veo3-ugc"
+    },
+    {
+      "updatedAt": "2026-05-26T07:22:38.224Z",
+      "createdAt": "2026-05-26T07:22:38.224Z",
+      "id": "zug59gIkdXFOrgTg",
+      "name": "v2-ai-video"
+    }
+  ]
+}
