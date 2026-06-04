@@ -327,9 +327,9 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "string",
-        "body": "={{ $json.bodyStr }}",
-        "options": {}
+        "specifyBody": "json",
+        "options": {},
+        "jsonBody": "={{ $json.bodyStr }}"
       },
       "id": "a714da9d-fd5c-40b6-9de2-368432ccb709",
       "name": "Trigger TikTok Video",
@@ -368,9 +368,9 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "string",
-        "body": "={{ $json.bodyStr }}",
-        "options": {}
+        "specifyBody": "json",
+        "options": {},
+        "jsonBody": "={{ $json.bodyStr }}"
       },
       "id": "6d2a5986-e3a7-4fdd-b7fb-a869104670cd",
       "name": "Trigger TikTok Phase 2",
@@ -401,7 +401,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const raw = $input.first().json;\nconst body = (raw.body && typeof raw.body === 'object') ? raw.body : raw;\n\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 300);\nconst rating = (body.rating !== undefined && body.rating !== null) ? body.rating : '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst productName = body.productName || title;\nlet pros = [];\ntry { pros = Array.isArray(body.pros) ? body.pros : JSON.parse(body.pros || '[]'); } catch (e) { pros = []; }\nconst contentText = String(body.content || '').replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/gi, ' ').replace(/\\s+/g, ' ').trim().substring(0, 600);\nconst articleUrl = slug ? 'https://kaoshop-omega.vercel.app/article/' + slug : 'https://kaoshop-omega.vercel.app';\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl, productName, pros, contentText } }];"
+        "jsCode": "const raw = $input.first().json;\nlet body = (raw && raw.body !== undefined) ? raw.body : raw;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) {} }\nif (body && typeof body === 'object' && body.title === undefined) {\n  const k = Object.keys(body);\n  if (k.length === 1 && String(k[0]).trim().startsWith('{')) { try { body = JSON.parse(k[0]); } catch (e) {} }\n}\nbody = body || {};\n\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 300);\nconst rating = (body.rating !== undefined && body.rating !== null) ? body.rating : '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || '';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst productName = body.productName || title;\nlet pros = [];\ntry { pros = Array.isArray(body.pros) ? body.pros : JSON.parse(body.pros || '[]'); } catch (e) { pros = []; }\nconst contentText = String(body.content || '').replace(/<[^>]+>/g, ' ').replace(/&[a-z]+;/gi, ' ').replace(/\\s+/g, ' ').trim().substring(0, 600);\nconst articleUrl = slug ? 'https://kaoshop-omega.vercel.app/article/' + slug : 'https://kaoshop-omega.vercel.app';\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl, productName, pros, contentText } }];"
       },
       "id": "eab50041-41ed-4fe0-98ab-693dccb5ec6f",
       "name": "เตรียม Content2",
@@ -644,7 +644,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body = $input.first().json.body || $input.first().json;\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 200);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || 'https://placehold.co/1080x1920/FF6B00/ffffff?text=KaoShop';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\nif (!videoUrl) throw new Error('videoUrl is required for TikTok Video workflow');\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl } }];"
+        "jsCode": "const raw = $input.first().json;\nlet body = (raw && raw.body !== undefined) ? raw.body : raw;\nif (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) {} }\nif (body && typeof body === 'object' && body.title === undefined) {\n  const k = Object.keys(body);\n  if (k.length === 1 && String(k[0]).trim().startsWith('{')) { try { body = JSON.parse(k[0]); } catch (e) {} }\n}\nbody = body || {};\nconst title = body.title || '';\nconst slug = body.slug || '';\nconst summary = (body.summary || body.excerpt || '').substring(0, 200);\nconst rating = body.rating || '';\nconst price = body.price || '';\nconst featuredImage = body.featuredImage || 'https://placehold.co/1080x1920/FF6B00/ffffff?text=KaoShop';\nconst affiliateUrl = body.affiliateUrl || '';\nconst videoUrl = body.videoUrl || '';\nconst articleUrl = 'https://kaoshop-omega.vercel.app/article/' + slug;\n\nif (!videoUrl) throw new Error('videoUrl is required for TikTok Video workflow');\n\nreturn [{ json: { title, slug, articleUrl, featuredImage, affiliateUrl, summary, rating, price, videoUrl } }];"
       },
       "id": "c1d89fae-6fbe-44ce-8c7f-eb1c2cb2a619",
       "name": "เตรียม Content3",
@@ -1540,9 +1540,9 @@
           ]
         },
         "sendBody": true,
-        "specifyBody": "string",
-        "body": "={{ JSON.stringify($json) }}",
-        "options": {}
+        "specifyBody": "json",
+        "options": {},
+        "jsonBody": "={{ JSON.stringify($json) }}"
       },
       "id": "e1a6c019-6407-4068-8e57-937a91fa80a1",
       "name": "โพสต์ Social Media",
