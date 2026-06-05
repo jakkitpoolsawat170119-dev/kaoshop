@@ -438,17 +438,9 @@ export default async function ArticlePage({
               <h3 className="font-bold text-gray-800 dark:text-gray-200 text-sm mb-3 flex items-center gap-2">
                 📚 ข้อมูลหนังสือ
               </h3>
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-gray-400 dark:text-gray-500 text-xs mb-0.5">ผู้เขียน</p>
-                  <p className="font-semibold text-gray-800 dark:text-gray-200">{article.author}</p>
-                </div>
-                {article.price && (
-                  <div>
-                    <p className="text-gray-400 dark:text-gray-500 text-xs mb-0.5">ราคา</p>
-                    <p className="font-semibold text-gray-800 dark:text-gray-200">{article.price} บาท</p>
-                  </div>
-                )}
+              <div className="text-sm">
+                <p className="text-gray-400 dark:text-gray-500 text-xs mb-0.5">ผู้เขียน</p>
+                <p className="font-semibold text-gray-800 dark:text-gray-200">{article.author}</p>
               </div>
             </div>
           )}
