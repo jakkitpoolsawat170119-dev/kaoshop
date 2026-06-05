@@ -411,6 +411,24 @@ export default async function ArticlePage({
             <VideoEmbed videoUrl={article.videoUrl} title={article.title} />
           )}
 
+          {/* MyJakkit Book Summary Link — เฉพาะหมวดหนังสือที่มี URL */}
+          {article.myjakkitUrl && (
+            <div className="flex items-center gap-4 bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 border-l-4 border-l-indigo-500 rounded-2xl px-5 py-4 mb-6">
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-indigo-900 dark:text-indigo-200 text-sm">📖 อยากอ่านสรุปหนังสือเล่มนี้ก่อนตัดสินใจ?</p>
+                <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">ดูบทสรุปและรีวิวหนังสือเพิ่มเติมได้ที่เว็บไซต์สรุปหนังสือของเรา</p>
+              </div>
+              <a
+                href={article.myjakkitUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-sm"
+              >
+                อ่านสรุปหนังสือ →
+              </a>
+            </div>
+          )}
+
           {/* Review Content */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 md:p-8 mb-6">
             <div

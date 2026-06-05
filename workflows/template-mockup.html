@@ -76,6 +76,14 @@
   .tag{display:inline-block;background:var(--card2);color:var(--muted);font-size:12px;
     padding:2px 10px;border-radius:99px;margin:2px 4px 2px 0}
   .note{color:var(--muted);font-size:13px;font-style:italic;margin-top:6px}
+  .cta-book{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#1a2942,#13203a);
+    border:1px solid var(--line);border-left:4px solid #6366f1;border-radius:14px;
+    padding:16px 18px;margin:18px 0}
+  .cta-book .txt{flex:1;font-size:14px}
+  .cta-book .txt b{color:#a5b4fc}
+  .cta-book a{white-space:nowrap;background:#6366f1;color:#fff;text-decoration:none;
+    font-weight:700;font-size:14px;padding:10px 18px;border-radius:10px}
+  .cta-book a:hover{background:#4f46e5}
 </style>
 </head>
 <body>
@@ -265,11 +273,19 @@
 
     <h2>ข้อมูลหนังสือ</h2>
     <table>
+      <tr><th>ผู้เขียน</th><td>จักรกฤษณ์ (Jakkit)</td></tr>
       <tr><th>หมวด</th><td>การเงินส่วนบุคคล</td></tr>
       <tr><th>จำนวนหน้า</th><td>256 หน้า</td></tr>
       <tr><th>ระดับ</th><td>เริ่มต้น–กลาง</td></tr>
       <tr><th>จุดเด่น</th><td>มีแบบฝึกหัดลงมือทำ</td></tr>
     </table>
+
+    <div class="cta-book">
+      <div class="txt">📖 <b>อยากอ่านสรุปหนังสือเล่มนี้ก่อนตัดสินใจ?</b><br>
+        ดูบทสรุปและรีวิวหนังสือเพิ่มเติมได้ที่เว็บไซต์สรุปหนังสือของเรา</div>
+      <a href="https://www.myjakkit.com/money-mastery" target="_blank" rel="noopener">อ่านสรุปหนังสือ →</a>
+    </div>
+    <p class="note">* URL ด้านบนมาจากคอลัมน์ <code>myjakkit_url</code> ใน Google Sheet — ใส่ลิงก์เฉพาะเล่มได้เลย ถ้าว่างไว้ปุ่มจะไม่แสดง</p>
 
     <h2>คำถามที่พบบ่อย</h2>
     <details class="faq"><summary>ต้องมีพื้นฐานการเงินก่อนไหม?</summary>

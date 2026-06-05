@@ -53,6 +53,7 @@ export async function PUT(
       ...(body.published !== undefined && { published: body.published }),
       ...(body.categoryId !== undefined && { categoryId: parseInt(body.categoryId) }),
       ...(body.videoUrl !== undefined && { videoUrl: body.videoUrl || null }),
+      ...(body.myjakkitUrl !== undefined && { myjakkitUrl: body.myjakkitUrl || null }),
     },
     include: { category: true },
   });
