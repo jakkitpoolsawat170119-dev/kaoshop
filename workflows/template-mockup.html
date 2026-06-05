@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KaoShop — Template Mockup รีวิวตามหมวด</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#131c2e; --card2:#1b2740; --line:#26324d;
+    --text:#e6eaf2; --muted:#9aa6bd; --orange:#FF6B00; --green:#22c55e;
+    --yellow:#eab308; --blue:#3b82f6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;line-height:1.7}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;background:var(--bg);
+    padding:14px 0;z-index:5;border-bottom:1px solid var(--line)}
+  .tab{padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+    background:var(--card);color:var(--muted);cursor:pointer;font-size:14px;font-weight:600}
+  .tab.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+  .panel{display:none;animation:fade .25s}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .cat-badge{display:inline-block;background:#16351f;color:var(--green);
+    font-size:12px;font-weight:700;padding:3px 12px;border-radius:999px;margin:18px 0 8px}
+  h1{font-size:26px;margin:6px 0 4px}
+  .sub{color:var(--muted);font-size:15px;margin-bottom:18px}
+
+  .quick-take{background:linear-gradient(135deg,#10243f,#0f1c33);
+    border:1px solid var(--line);border-left:4px solid var(--orange);
+    border-radius:14px;padding:16px 18px;margin:18px 0;font-size:15px}
+  .quick-take b{color:var(--orange)}
+
+  .scorecard{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:18px;margin:18px 0;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+  .score-big{width:84px;height:84px;border-radius:50%;border:5px solid var(--green);
+    display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-big .n{font-size:24px;font-weight:800;line-height:1}
+  .score-big .s{font-size:11px;color:var(--muted)}
+  .bars{display:flex;flex-direction:column;gap:9px}
+  .bar-row{display:grid;grid-template-columns:130px 1fr 34px;align-items:center;gap:10px;font-size:13px}
+  .bar{height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:99px;background:var(--green)}
+  .bar.y > i{background:var(--yellow)}
+
+  h2{font-size:19px;margin:30px 0 10px;padding-left:11px;border-left:4px solid var(--orange)}
+  p{color:#d7deea}
+  ul{padding-left:20px;color:#d7deea}
+  li{margin:5px 0}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;
+    background:var(--card);border-radius:12px;overflow:hidden}
+  th,td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left}
+  th{background:var(--card2);color:var(--muted);font-weight:600;width:38%}
+  tr:last-child td{border-bottom:none}
+
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+  @media(max-width:620px){.verdict{grid-template-columns:1fr}}
+  .vbox{border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
+  .vbox.buy{background:#0f2a1a;border-color:#1c4a30}
+  .vbox.no{background:#2a1414;border-color:#4a1c1c}
+  .vbox h3{margin:0 0 8px;font-size:15px}
+  .vbox.buy h3{color:var(--green)}.vbox.no h3{color:#f87171}
+  .vbox ul{margin:0;padding-left:18px;font-size:14px}
+
+  .faq{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:6px 16px;margin:10px 0}
+  .faq summary{cursor:pointer;font-weight:600;padding:10px 0;list-style:none}
+  .faq summary::before{content:"❓ ";}
+  .faq p{margin:0 0 12px;font-size:14px;color:var(--muted)}
+
+  .disclaimer{background:#2a230f;border:1px solid #5c4a14;border-radius:10px;
+    padding:12px 16px;font-size:13px;color:#e9d8a6;margin:18px 0}
+  .tag{display:inline-block;background:var(--card2);color:var(--muted);font-size:12px;
+    padding:2px 10px;border-radius:99px;margin:2px 4px 2px 0}
+  .note{color:var(--muted);font-size:13px;font-style:italic;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="text-align:center;margin-bottom:4px">
+    <span style="font-size:13px;color:var(--muted)">KaoShop · Template Mockup (ตัวอย่างโครงสร้างตามหมวด)</span>
+  </div>
+  <div class="tabs">
+    <div class="tab active" data-t="audio">🎧 หูฟัง</div>
+    <div class="tab" data-t="health">💊 สุขภาพ</div>
+    <div class="tab" data-t="book">📚 หนังสือ</div>
+    <div class="tab" data-t="elec">📱 อิเล็กทรอนิกส์</div>
+  </div>
+
+  <!-- ================= หูฟัง ================= -->
+  <div class="panel active" id="audio">
+    <span class="cat-badge">หูฟัง</span>
+    <h1>รีวิว Soundcore Liberty 4 NC: ตัดเสียงเด็ดในงบไม่ถึงสองพัน</h1>
+    <div class="sub">หูฟัง True Wireless · ราคา ~1,790 บาท · ทดสอบใช้งานจริง 2 สัปดาห์</div>
+
+    <div class="quick-take"><b>ฟันธง:</b> เสียงเบสแน่น ANC แรงเกินราคา ใส่สบายทั้งวัน
+      เหมาะกับคนเดินทาง/ทำงานในที่เสียงดัง จุดอ่อนเดียวคือไมค์โทรในที่ลมแรงยังธรรมดา</div>
+
+    <div class="scorecard">
+      <div class="score-big"><span class="n">8.6</span><span class="s">/10</span></div>
+      <div class="bars">
+        <div class="bar-row"><span>คุณภาพเสียง</span><div class="bar"><i style="width:88%"></i></div><b>8.8</b></div>
+        <div class="bar-row"><span>ตัดเสียงรบกวน</span><div class="bar"><i style="width:90%"></i></div><b>9.0</b></div>
+        <div class="bar-row"><span>ความสบาย</span><div class="bar"><i style="width:85%"></i></div><b>8.5</b></div>
+        <div class="bar-row"><span>แบตเตอรี่</span><div class="bar"><i style="width:80%"></i></div><b>8.0</b></div>
+        <div class="bar-row"><span>ความคุ้มค่า</span><div class="bar"><i style="width:92%"></i></div><b>9.2</b></div>
+      </div>
+    </div>
+
+    <h2>คุณภาพเสียง</h2>
+    <p>เบสลงลึกแน่นกำลังดี ไม่กลบเสียงร้อง โทนกลางชัด ฟังเพลงป๊อป/ฮิปฮอปสนุก
+      มิติเสียง (soundstage) กว้างกว่าที่คาดในระดับราคานี้ รองรับ LDAC ได้รายละเอียดเพิ่มเมื่อจับคู่มือถือ Android</p>
+
+    <h2>การตัดเสียงรบกวน (ANC)</h2>
+    <p>ตัดเสียงเครื่องยนต์/แอร์ได้เงียบจริง โหมด Transparency ฟังเสียงรอบข้างเป็นธรรมชาติ
+      มีระบบปรับ ANC อัตโนมัติตามสภาพแวดล้อม</p>
+
+    <h2>ความสบาย & การสวมใส่</h2>
+    <p>ตัวหูฟังเบา จุกซิลิโคน 4 ขนาด ใส่ต่อเนื่อง 3-4 ชม. ไม่เจ็บหู ยึดเกาะดีตอนเดินเร็ว</p>
+
+    <h2>แบตเตอรี่ & การเชื่อมต่อ</h2>
+    <p>เปิด ANC ได้ ~8 ชม. รวมเคส ~40 ชม. รองรับ multipoint 2 เครื่องพร้อมกัน ความหน่วงต่ำพอเล่นเกมทั่วไป</p>
+
+    <h2>ข้อมูลจำเพาะ</h2>
+    <table>
+      <tr><th>ไดรเวอร์</th><td>11mm ไดนามิก</td></tr>
+      <tr><th>Codec</th><td>SBC, AAC, LDAC</td></tr>
+      <tr><th>กันน้ำ</th><td>IPX4</td></tr>
+      <tr><th>แบตเตอรี่ (เปิด ANC)</th><td>8 ชม. / รวมเคส 40 ชม.</td></tr>
+      <tr><th>การเชื่อมต่อ</th><td>Bluetooth 5.3 · Multipoint</td></tr>
+    </table>
+
+    <div class="verdict">
+      <div class="vbox buy"><h3>✅ ควรซื้อถ้า...</h3><ul>
+        <li>เดินทาง/นั่งทำงานในที่เสียงดังบ่อย</li>
+        <li>ใช้ Android อยากได้เสียง LDAC</li>
+        <li>งบไม่ถึง 2,000 แต่อยาก ANC ดี</li></ul></div>
+      <div class="vbox no"><h3>❌ ไม่ควรซื้อถ้า...</h3><ul>
+        <li>เน้นคุยโทรศัพท์กลางแจ้งลมแรง</li>
+        <li>ต้องการเสียงสาย audiophile จริงจัง</li></ul></div>
+    </div>
+
+    <h2>คำถามที่พบบ่อย</h2>
+    <details class="faq"><summary>ใช้กับ iPhone ได้เสียงดีไหม?</summary>
+      <p>ได้ครับ แต่ iPhone รองรับแค่ AAC จะไม่ได้ LDAC — เสียงยังดีอยู่แต่รายละเอียดน้อยกว่าฝั่ง Android</p></details>
+    <details class="faq"><summary>กันเหงื่อออกกำลังกายได้ไหม?</summary>
+      <p>มาตรฐาน IPX4 กันเหงื่อ/ละอองน้ำได้ ใส่วิ่ง/ฟิตเนสได้ แต่ไม่ควรแช่น้ำ</p></details>
+
+    <h2>สรุป</h2>
+    <p>ในงบไม่ถึงสองพัน Liberty 4 NC ให้ ANC และเสียงที่เกินตัว เป็นตัวเลือกคุ้มค่าที่สุดตัวหนึ่งของปีสำหรับสายเดินทาง</p>
+  </div>
+
+  <!-- ================= สุขภาพ ================= -->
+  <div class="panel" id="health">
+    <span class="cat-badge">สุขภาพ</span>
+    <h1>รีวิว Blackmores Fish Oil 1000mg: น้ำมันปลายอดนิยม คุ้มจริงไหม?</h1>
+    <div class="sub">อาหารเสริมน้ำมันปลา · ราคา ~520 บาท (400 เม็ด)</div>
+
+    <div class="quick-take"><b>ฟันธง:</b> ปริมาณ Omega-3 ต่อเม็ดมาตรฐาน กลืนง่ายไม่คาวมาก
+      คุ้มค่าต่อวันดีเมื่อซื้อขวดใหญ่ เหมาะเป็นตัวเริ่มต้นสำหรับคนทั่วไป</div>
+
+    <div class="disclaimer">⚠️ บทความนี้เป็นการรีวิวผลิตภัณฑ์ ไม่ใช่คำแนะนำทางการแพทย์
+      ผู้มีโรคประจำตัว ตั้งครรภ์ หรือทานยาละลายลิ่มเลือด ควรปรึกษาแพทย์/เภสัชกรก่อนใช้</div>
+
+    <div class="scorecard">
+      <div class="score-big" style="border-color:var(--yellow)"><span class="n">7.8</span><span class="s">/10</span></div>
+      <div class="bars">
+        <div class="bar-row"><span>ส่วนผสม</span><div class="bar"><i style="width:82%"></i></div><b>8.2</b></div>
+        <div class="bar-row"><span>ประสิทธิผล</span><div class="bar y"><i style="width:75%"></i></div><b>7.5</b></div>
+        <div class="bar-row"><span>ความปลอดภัย</span><div class="bar"><i style="width:88%"></i></div><b>8.8</b></div>
+        <div class="bar-row"><span>ใช้ง่าย/รสชาติ</span><div class="bar y"><i style="width:72%"></i></div><b>7.2</b></div>
+        <div class="bar-row"><span>ความคุ้มค่า</span><div class="bar"><i style="width:85%"></i></div><b>8.5</b></div>
+      </div>
+    </div>
+
+    <h2>ส่วนผสมสำคัญ & ปริมาณ</h2>
+    <p>ต่อเม็ดให้น้ำมันปลา 1,000mg มี EPA 180mg / DHA 120mg รวม Omega-3 ~300mg
+      หากต้องการ ~500mg/วันตามคำแนะนำทั่วไป ทาน 2 เม็ดก็เพียงพอ</p>
+
+    <h2>ประสิทธิผลที่คาดหวัง</h2>
+    <p>Omega-3 มีงานวิจัยรองรับด้านสุขภาพหัวใจและระดับไตรกลีเซอไรด์ ทั้งนี้ผลขึ้นกับปริมาณและความต่อเนื่อง
+      ไม่ใช่ผลแบบเห็นทันที</p>
+
+    <h2>ความปลอดภัย & ข้อควรระวัง</h2>
+    <ul>
+      <li>อาจมีอาการเรอกลิ่นปลา/ท้องอืดในบางคน</li>
+      <li>ผู้ทานยาละลายลิ่มเลือดควรปรึกษาแพทย์</li>
+      <li>เก็บให้พ้นความร้อนเพื่อกันน้ำมันหืน</li>
+    </ul>
+
+    <h2>วิธีรับประทาน & ความคุ้มค่าต่อวัน</h2>
+    <p>ทานพร้อมมื้ออาหารเพื่อดูดซึมดีและลดการเรอ ขวด 400 เม็ดที่ ~520 บาท
+      หากทาน 2 เม็ด/วัน = ~2.6 บาท/วัน ถือว่าคุ้มเทียบแบรนด์นำเข้า</p>
+
+    <h2>ข้อมูลผลิตภัณฑ์</h2>
+    <table>
+      <tr><th>ปริมาณน้ำมันปลา/เม็ด</th><td>1,000 mg</td></tr>
+      <tr><th>EPA / DHA</th><td>180mg / 120mg</td></tr>
+      <tr><th>ปริมาณบรรจุ</th><td>400 เม็ด</td></tr>
+      <tr><th>ราคา/วัน (2 เม็ด)</th><td>~2.6 บาท</td></tr>
+    </table>
+
+    <div class="verdict">
+      <div class="vbox buy"><h3>✅ ควรซื้อถ้า...</h3><ul>
+        <li>อยากเริ่มเสริม Omega-3 แบบพื้นฐาน</li>
+        <li>เน้นคุ้มค่าต่อวัน ทานระยะยาว</li></ul></div>
+      <div class="vbox no"><h3>❌ ไม่ควรซื้อถ้า...</h3><ul>
+        <li>ต้องการ Omega-3 เข้มข้นสูงต่อเม็ด</li>
+        <li>แพ้ปลา/อาหารทะเล</li></ul></div>
+    </div>
+
+    <h2>คำถามที่พบบ่อย</h2>
+    <details class="faq"><summary>ทานตอนไหนดีที่สุด?</summary>
+      <p>ทานพร้อมหรือหลังมื้ออาหารที่มีไขมันเล็กน้อย ช่วยดูดซึมดีและลดอาการเรอกลิ่นปลา</p></details>
+    <details class="faq"><summary>ทานทุกวันได้ไหม?</summary>
+      <p>โดยทั่วไปทานต่อเนื่องได้ แต่หากมีโรคประจำตัวหรือทานยาอื่น ควรปรึกษาแพทย์ก่อน</p></details>
+
+    <h2>สรุป</h2>
+    <p>น้ำมันปลาตัวคุ้มค่าสำหรับคนทั่วไปที่อยากเริ่มดูแลสุขภาพ ปริมาณมาตรฐาน ปลอดภัย ราคาต่อวันถูก</p>
+  </div>
+
+  <!-- ================= หนังสือ ================= -->
+  <div class="panel" id="book">
+    <span class="cat-badge">หนังสือ</span>
+    <h1>รีวิวหนังสือ Money Mastery มั่งคั่งทั้งชีวิต: คู่มือการเงินสำหรับมือใหม่</h1>
+    <div class="sub">หนังสือการเงินส่วนบุคคล · ราคา ~274 บาท · 256 หน้า</div>
+
+    <div class="quick-take"><b>ฟันธง:</b> อ่านง่าย มีแบบฝึกหัดให้ลงมือจริง เหมาะคนเริ่มต้นจัดการเงิน
+      ถ้าอ่านแนวการเงินมาเยอะแล้วอาจรู้สึกพื้นฐานไปนิด</div>
+
+    <div class="scorecard">
+      <div class="score-big"><span class="n">9.0</span><span class="s">/10</span></div>
+      <div class="bars">
+        <div class="bar-row"><span>เนื้อหา/สาระ</span><div class="bar"><i style="width:90%"></i></div><b>9.0</b></div>
+        <div class="bar-row"><span>ความอ่านง่าย</span><div class="bar"><i style="width:92%"></i></div><b>9.2</b></div>
+        <div class="bar-row"><span>นำไปใช้จริง</span><div class="bar"><i style="width:88%"></i></div><b>8.8</b></div>
+        <div class="bar-row"><span>ความน่าสนใจ</span><div class="bar"><i style="width:85%"></i></div><b>8.5</b></div>
+        <div class="bar-row"><span>ความคุ้มค่า</span><div class="bar"><i style="width:90%"></i></div><b>9.0</b></div>
+      </div>
+    </div>
+
+    <h2>เนื้อหาครอบคลุมอะไรบ้าง</h2>
+    <p>เริ่มจากการตั้งเป้าหมายการเงิน → ทำงบรายรับรายจ่าย → ปลดหนี้ → ออม → ลงทุนเบื้องต้น
+      ปิดท้ายด้วยการวางแผนระยะยาว เป็นลำดับที่ไล่จากง่ายไปยาก</p>
+
+    <h2>เหมาะกับใคร</h2>
+    <ul>
+      <li><b>มือใหม่:</b> เหมาะมาก เริ่มจากศูนย์ได้</li>
+      <li><b>ระดับกลาง:</b> ใช้ทบทวน/จัดระบบความคิด</li>
+      <li><b>ขั้นสูง:</b> อาจพื้นฐานเกินไป</li>
+    </ul>
+
+    <h2>สไตล์การเขียน & ความอ่านง่าย</h2>
+    <p>ภาษากันเอง มีตัวอย่างสถานการณ์จริงและภาพประกอบ แต่ละบทสั้น จบในตัว อ่านวันละบทได้สบาย</p>
+
+    <h2>นำไปใช้จริงได้แค่ไหน</h2>
+    <p>จุดเด่นคือมี "แบบฝึกหัด" ท้ายบทให้กรอกตัวเลขจริง ทำให้ไม่ใช่แค่อ่านผ่านแต่ได้ลงมือทำแผนการเงินของตัวเอง</p>
+
+    <h2>ข้อมูลหนังสือ</h2>
+    <table>
+      <tr><th>หมวด</th><td>การเงินส่วนบุคคล</td></tr>
+      <tr><th>จำนวนหน้า</th><td>256 หน้า</td></tr>
+      <tr><th>ระดับ</th><td>เริ่มต้น–กลาง</td></tr>
+      <tr><th>จุดเด่น</th><td>มีแบบฝึกหัดลงมือทำ</td></tr>
+    </table>
+
+    <div class="verdict">
+      <div class="vbox buy"><h3>✅ ควรซื้อถ้า...</h3><ul>
+        <li>อยากเริ่มจัดการเงินอย่างเป็นระบบ</li>
+        <li>ชอบหนังสือที่มีแบบฝึกหัดให้ทำ</li></ul></div>
+      <div class="vbox no"><h3>❌ ไม่ควรซื้อถ้า...</h3><ul>
+        <li>อ่านหนังสือการเงินมาเยอะแล้ว</li>
+        <li>มองหาเทคนิคลงทุนขั้นสูง</li></ul></div>
+    </div>
+
+    <h2>คำถามที่พบบ่อย</h2>
+    <details class="faq"><summary>ต้องมีพื้นฐานการเงินก่อนไหม?</summary>
+      <p>ไม่จำเป็นเลย เล่มนี้ออกแบบมาสำหรับคนเริ่มต้นจากศูนย์โดยเฉพาะ</p></details>
+    <details class="faq"><summary>เนื้อหาเน้นลงทุนหุ้นไหม?</summary>
+      <p>มีพูดถึงการลงทุนเบื้องต้น แต่หัวใจของเล่มคือการ "จัดระเบียบการเงิน" มากกว่าเทคนิคลงทุนเฉพาะทาง</p></details>
+
+    <h2>สรุป</h2>
+    <p>คู่มือการเงินที่ดีสำหรับมือใหม่ อ่านง่าย ลงมือทำได้จริง คุ้มราคาในฐานะเล่มเริ่มต้น</p>
+  </div>
+
+  <!-- ================= อิเล็กทรอนิกส์ ================= -->
+  <div class="panel" id="elec">
+    <span class="cat-badge">อิเล็กทรอนิกส์</span>
+    <h1>รีวิว Honor 600 Pro 5G: สมาร์ทโฟนคุ้มค่าที่คุ้มราคา</h1>
+    <div class="sub">สมาร์ทโฟน 5G · ราคา ~12,990 บาท</div>
+
+    <div class="quick-take"><b>ฟันธง:</b> จอสวย กล้องกลางวันคมชัด แบตอึดทั้งวัน ในราคาหมื่นต้น
+      จุดที่ต้องยอมคือกล้องกลางคืนธรรมดาและไม่กันน้ำเต็มรูปแบบ</div>
+
+    <div class="scorecard">
+      <div class="score-big"><span class="n">8.4</span><span class="s">/10</span></div>
+      <div class="bars">
+        <div class="bar-row"><span>ประสิทธิภาพ</span><div class="bar"><i style="width:84%"></i></div><b>8.4</b></div>
+        <div class="bar-row"><span>ดีไซน์/วัสดุ</span><div class="bar"><i style="width:86%"></i></div><b>8.6</b></div>
+        <div class="bar-row"><span>ฟีเจอร์</span><div class="bar"><i style="width:80%"></i></div><b>8.0</b></div>
+        <div class="bar-row"><span>แบต/ทนทาน</span><div class="bar"><i style="width:90%"></i></div><b>9.0</b></div>
+        <div class="bar-row"><span>ความคุ้มค่า</span><div class="bar"><i style="width:88%"></i></div><b>8.8</b></div>
+      </div>
+    </div>
+
+    <h2>สเปก & ประสิทธิภาพจริง</h2>
+    <p>ชิป Snapdragon ระดับกลาง เล่นโซเชียล/ดูวิดีโอลื่น เกมยอดนิยมปรับกลางได้สบาย
+      RAM 12GB สลับแอปไม่กระตุก งานหนักต่อเนื่องจะเริ่มอุ่นแต่ไม่ถึงกับร้อน</p>
+
+    <h2>ดีไซน์ & วัสดุ/งานประกอบ</h2>
+    <p>บอดี้บาง เฟรมแข็งแรง จับถนัด จอ AMOLED 120Hz สีสด สู้แดดได้ดี งานประกอบแน่นเกินราคา</p>
+
+    <h2>ฟีเจอร์เด่น & การใช้งานจริง</h2>
+    <ul>
+      <li>กล้องหลัก 50MP กลางวันคมชัด สีอิ่ม</li>
+      <li>ชาร์จไว 66W ~30 นาทีได้เกินครึ่ง</li>
+      <li>มี NFC + ลำโพงคู่</li>
+    </ul>
+
+    <h2>แบต / ความร้อน / ความทนทาน</h2>
+    <p>แบต 5,200mAh ใช้งานหนักอยู่ได้ทั้งวันสบาย วันใช้ปกติถึงข้ามคืน ความร้อนคุมได้ดีในงานทั่วไป</p>
+
+    <h2>ข้อมูลจำเพาะ</h2>
+    <table>
+      <tr><th>หน้าจอ</th><td>6.7" AMOLED 120Hz</td></tr>
+      <tr><th>ชิป / RAM</th><td>Snapdragon mid · 12GB</td></tr>
+      <tr><th>กล้องหลัก</th><td>50MP</td></tr>
+      <tr><th>แบต / ชาร์จ</th><td>5,200mAh · 66W</td></tr>
+      <tr><th>กันน้ำ</th><td>IP54 (กันละออง)</td></tr>
+    </table>
+
+    <div class="verdict">
+      <div class="vbox buy"><h3>✅ ควรซื้อถ้า...</h3><ul>
+        <li>งบหมื่นต้น เน้นจอสวย+แบตอึด</li>
+        <li>ถ่ายรูปกลางวัน/โซเชียลเป็นหลัก</li></ul></div>
+      <div class="vbox no"><h3>❌ ไม่ควรซื้อถ้า...</h3><ul>
+        <li>เน้นถ่ายกลางคืนจริงจัง</li>
+        <li>ต้องการกันน้ำลึก (IP68)</li></ul></div>
+    </div>
+
+    <h2>คำถามที่พบบ่อย</h2>
+    <details class="faq"><summary>เล่นเกมหนักๆ ไหวไหม?</summary>
+      <p>เกมยอดนิยมปรับกราฟิกกลาง-สูงเล่นได้ลื่น แต่ถ้าเน้นเกมกินสเปกสุดๆ ตั้งกราฟิกสูงสุดนานๆ จะเริ่มอุ่น</p></details>
+    <details class="faq"><summary>กันน้ำได้แค่ไหน?</summary>
+      <p>มาตรฐาน IP54 กันละอองน้ำ/ฝนปรอยได้ แต่ไม่ควรจุ่มน้ำหรือใช้ใต้น้ำ</p></details>
+
+    <h2>สรุป</h2>
+    <p>สมาร์ทโฟนหมื่นต้นที่บาลานซ์ดี จอ-แบต-งานประกอบเกินราคา เหมาะคนใช้งานทั่วไปที่ไม่เน้นถ่ายกลางคืน</p>
+  </div>
+
+  <p class="note" style="margin-top:40px">* นี่คือ mockup โครงสร้าง — เนื้อหาเป็นตัวอย่าง เมื่อใช้งานจริง GPT จะเขียนตามข้อมูลสินค้าแต่ละชิ้น</p>
+</div>
+
+<script>
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById(t.dataset.t).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+  });
+</script>
+</body>
+</html>
