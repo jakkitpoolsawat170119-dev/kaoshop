@@ -24,6 +24,7 @@ interface ArticleFormData {
   categoryId: string;
   videoUrl: string;
   myjakkitUrl: string;
+  author: string;
   published: boolean;
 }
 
@@ -42,6 +43,7 @@ const emptyForm: ArticleFormData = {
   categoryId: "",
   videoUrl: "",
   myjakkitUrl: "",
+  author: "",
   published: false,
 };
 
@@ -84,6 +86,7 @@ export default function AdminArticleForm({
             categoryId: String(data.categoryId),
             videoUrl: data.videoUrl || "",
             myjakkitUrl: data.myjakkitUrl || "",
+            author: data.author || "",
             published: data.published,
           });
         })
@@ -356,21 +359,37 @@ export default function AdminArticleForm({
         <p className="text-xs text-gray-400 mt-1">รองรับ YouTube (watch, shorts) และ TikTok</p>
       </div>
 
-      {/* MyJakkit URL (หมวดหนังสือ) */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          MyJakkit URL <span className="text-gray-400 font-normal">(สรุปหนังสือ — เฉพาะหมวดหนังสือ)</span>
-        </label>
-        <input
-          type="url"
-          value={form.myjakkitUrl}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, myjakkitUrl: e.target.value }))
-          }
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          placeholder="https://www.myjakkit.com/ชื่อหนังสือ"
-        />
-        <p className="text-xs text-gray-400 mt-1">ใส่ลิงก์สรุปหนังสือจาก myjakkit.com — จะแสดงปุ่ม "อ่านสรุปหนังสือ" บนหน้าบทความ</p>
+      {/* MyJakkit URL + Author (หมวดหนังสือ) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            ชื่อผู้เขียน <span className="text-gray-400 font-normal">(เฉพาะหมวดหนังสือ)</span>
+          </label>
+          <input
+            type="text"
+            value={form.author}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, author: e.target.value }))
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="เช่น Peter Attia, MD"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            MyJakkit URL <span className="text-gray-400 font-normal">(เฉพาะหมวดหนังสือ)</span>
+          </label>
+          <input
+            type="url"
+            value={form.myjakkitUrl}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, myjakkitUrl: e.target.value }))
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="https://www.myjakkit.com/ชื่อหนังสือ"
+          />
+          <p className="text-xs text-gray-400 mt-1">จะแสดงปุ่ม "อ่านสรุปหนังสือ" บนหน้าบทความ</p>
+        </div>
       </div>
 
       {/* Featured Image & Affiliate URL */}

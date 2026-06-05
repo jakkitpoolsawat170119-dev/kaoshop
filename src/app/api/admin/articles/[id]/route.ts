@@ -54,6 +54,7 @@ export async function PUT(
       ...(body.categoryId !== undefined && { categoryId: parseInt(body.categoryId) }),
       ...(body.videoUrl !== undefined && { videoUrl: body.videoUrl || null }),
       ...(body.myjakkitUrl !== undefined && { myjakkitUrl: body.myjakkitUrl || null }),
+      ...(body.author !== undefined && { author: body.author || null }),
     },
     include: { category: true },
   });

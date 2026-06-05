@@ -40,6 +40,7 @@ model Article {
   clicks         Int       @default(0) // จำนวนคลิก affiliate link
   videoUrl       String?   // URL ของวิดีโอรีวิว (YouTube / TikTok)
   myjakkitUrl    String?   // URL บทสรุปหนังสือที่ myjakkit.com (เฉพาะหมวดหนังสือ)
+  author         String?   // ชื่อผู้เขียน (เฉพาะหมวดหนังสือ)
   categoryId     Int
   category       Category  @relation(fields: [categoryId], references: [id])
   createdAt      DateTime  @default(now())

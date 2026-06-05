@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     categorySlug,
     videoUrl,
     myjakkitUrl,
+    author,
     published = true,
   } = body;
 
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
         productName: productName || null,
         videoUrl: videoUrl || null,
         myjakkitUrl: myjakkitUrl || null,
+        author: author || null,
         published,
         categoryId: category.id,
       },
