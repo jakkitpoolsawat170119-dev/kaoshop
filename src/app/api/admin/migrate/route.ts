@@ -22,5 +22,19 @@ export async function POST() {
     }
   }
 
+  // Add author column if not exists
+  try {
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "Article" ADD COLUMN "author" TEXT`
+    );
+    results.push("✅ Added column author to Article table");
+  } catch (e: any) {
+    if (e?.message?.includes("duplicate column") || e?.message?.includes("already exists")) {
+      results.push("ℹ️ Column author already exists — skipped");
+    } else {
+      results.push(`❌ author error: ${e?.message}`);
+    }
+  }
+
   return Response.json({ ok: true, results });
 }
