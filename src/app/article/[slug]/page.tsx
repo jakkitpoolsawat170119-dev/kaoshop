@@ -172,6 +172,48 @@ export default async function ArticlePage({
 
   const pros = parseProsConsString(article.pros);
   const cons = parseProsConsString(article.cons);
+  const isBook = article.category.name.includes("หนังสือ");
+
+  const prosConsBlock = (pros.length > 0 || cons.length > 0) ? (
+    <div className="grid md:grid-cols-2 gap-4 mb-6">
+      {pros.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-green-200 dark:border-green-900 p-5">
+          <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
+            <span className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shrink-0">
+              <ThumbsUp size={12} className="text-white" />
+            </span>
+            จุดเด่น
+          </h3>
+          <ul className="space-y-2.5">
+            {pros.map((pro: string, i: number) => (
+              <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
+                <span className="text-green-500 font-bold mt-0.5 shrink-0">✓</span>
+                {pro}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {cons.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-red-200 dark:border-red-900 p-5">
+          <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
+            <span className="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center shrink-0">
+              <ThumbsDown size={12} className="text-white" />
+            </span>
+            จุดด้อย
+          </h3>
+          <ul className="space-y-2.5">
+            {cons.map((con: string, i: number) => (
+              <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
+                <span className="text-red-400 font-bold mt-0.5 shrink-0">✗</span>
+                {con}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  ) : null;
 
   type ScoreBreakdown = { value: number; quality: number; performance: number; design: number; ease: number };
   let scoreBreakdown: ScoreBreakdown | null = null;
@@ -364,47 +406,8 @@ export default async function ArticlePage({
             </div>
           </div>
 
-          {/* จุดเด่น / จุดด้อย */}
-          {(pros.length > 0 || cons.length > 0) && (
-            <div className="grid md:grid-cols-2 gap-4 mb-6">
-              {pros.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-green-200 dark:border-green-900 p-5">
-                  <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
-                    <span className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shrink-0">
-                      <ThumbsUp size={12} className="text-white" />
-                    </span>
-                    จุดเด่น
-                  </h3>
-                  <ul className="space-y-2.5">
-                    {pros.map((pro: string, i: number) => (
-                      <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                        <span className="text-green-500 font-bold mt-0.5 shrink-0">✓</span>
-                        {pro}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {cons.length > 0 && (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-red-200 dark:border-red-900 p-5">
-                  <h3 className="font-bold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2 text-sm">
-                    <span className="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center shrink-0">
-                      <ThumbsDown size={12} className="text-white" />
-                    </span>
-                    จุดด้อย
-                  </h3>
-                  <ul className="space-y-2.5">
-                    {cons.map((con: string, i: number) => (
-                      <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                        <span className="text-red-400 font-bold mt-0.5 shrink-0">✗</span>
-                        {con}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
+          {/* จุดเด่น / จุดด้อย — หมวดอื่นแสดงตรงนี้ (หมวดหนังสือย้ายไปใต้เนื้อหา) */}
+          {!isBook && prosConsBlock}
 
           {/* Video Review */}
           {article.videoUrl && (
@@ -461,6 +464,9 @@ export default async function ArticlePage({
               dangerouslySetInnerHTML={{ __html: contentWithIds }}
             />
           </div>
+
+          {/* จุดเด่น / จุดด้อย — หมวดหนังสือแสดงใต้เนื้อหา (ใต้ข้อมูลหนังสือ) */}
+          {isBook && prosConsBlock}
 
           {/* Coupons */}
           <div className="bg-orange-50 dark:bg-orange-900/20 border border-dashed border-orange-300 dark:border-orange-700 rounded-2xl p-5 mb-6">
