@@ -642,7 +642,7 @@
           "values": [
             {
               "role": "system",
-              "content": "คุณเป็นผู้กำกับและนักเขียน script วีดีโอรีวิวสินค้า UGC style สำหรับ TikTok/Reels ที่เชี่ยวชาญ\nตอบเป็น JSON เท่านั้น ไม่มี markdown code block ไม่มีข้อความอื่น"
+              "content": "คุณเป็นผู้กำกับและนักเขียน script วีดีโอรีวิวสินค้า UGC style สำหรับ TikTok/Reels ที่เชี่ยวชาญ\nตอบเป็น JSON เท่านั้น ไม่มี markdown code block ไม่มีข้อความอื่น\nสำคัญ: ห้ามกล่าวถึงชื่อบุคคลจริงในบทพูดและ video direction ทุกกรณี (เช่น ชื่อผู้เขียนหนังสือ นักแสดง ผู้กำกับ บุคคลสาธารณะ) เพราะจะถูก safety filter บล็อก ให้ใช้คำว่า 'ผู้เขียน' แทนชื่อจริงเสมอ"
             },
             {
               "content": "={{ `สร้าง script วีดีโอรีวิวสั้น 15 วินาที สำหรับ:\n\nสินค้า: ${$('เตรียมข้อมูล').first().json.product_name}\nราคา: ${$('เตรียมข้อมูล').first().json.price} บาท\nหมวด: ${$('เตรียมข้อมูล').first().json.category}\nจุดเด่น: ${$('เตรียมข้อมูล').first().json.highlights}\nคะแนน: ${(() => { try { const r = $('Editor Agent1').first().json; const t = r.output?.[0]?.content?.[0]?.text || r.message?.content || '{}'; const c = t.replace(/^\\`\\`\\`json\\n?/i,'').replace(/\\n?\\`\\`\\`$/i,'').trim(); return JSON.parse(c).rating || '4.0'; } catch(e) { return '4.0'; } })()}/5\n\nตอบในรูปแบบ JSON นี้เท่านั้น:\n{\n  \"thaiScript\": \"บทพูดภาษาไทย 30-35 คำ เปิดด้วย hook ทันทีเช่น 'ชอบมากเลย...' หรือ 'ลองแล้วบอกเลย...' กระชับ น่าฟัง เหมือนรีวิวจริง ไม่ใช่โฆษณา จบด้วยชวนไปดูที่ KaoShop\",\n  \"videoDirection\": \"English: Describe the scene — what the Thai woman presenter looks like, what she is doing specifically with this product, her expression, background setting, lighting. Be specific to this product type.\"\n}` }}"
@@ -760,10 +760,10 @@
             {
               "id": "cond-veo3-done",
               "leftValue": "={{ $json.data.successFlag }}",
-              "rightValue": 0,
+              "rightValue": 1,
               "operator": {
                 "type": "number",
-                "operation": "notEquals"
+                "operation": "equals"
               }
             }
           ],
