@@ -699,7 +699,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  prompt: $json.videoPrompt,\n  imageUrls: $json.imageUrls,\n  model: 'veo3',\n  watermark: false,\n  aspect_ratio: '9:16',\n  enableTranslation: false,\n  generationType: 'REFERENCE_2_VIDEO'\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  prompt: $json.videoPrompt,\n  imageUrls: ($json.imageUrls && $json.imageUrls.length > 0) ? $json.imageUrls : [$json.imageUrl].filter(Boolean),\n  model: 'veo3_lite',\n  aspect_ratio: '9:16',\n  enableTranslation: false,\n  generationType: 'REFERENCE_2_VIDEO'\n}) }}",
         "options": {}
       },
       "id": "0d6a248c-b0af-4b01-b2ed-038afdbccac0",
@@ -709,7 +709,8 @@
       "position": [
         -4768,
         -624
-      ]
+      ],
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
