@@ -107,6 +107,20 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4">
+            <Link href="/privacy" className="hover:text-white">
+              นโยบายความเป็นส่วนตัว
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              ข้อกำหนดการใช้งาน
+            </Link>
+            <Link href="/about" className="hover:text-white">
+              เกี่ยวกับเรา
+            </Link>
+            <Link href="/contact" className="hover:text-white">
+              ติดต่อเรา
+            </Link>
+          </div>
           <p>&copy; {new Date().getFullYear()} KaoShop. All rights reserved.</p>
         </div>
       </div>
