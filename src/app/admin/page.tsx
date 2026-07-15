@@ -14,7 +14,7 @@ import {
   Pencil,
   LogOut,
   Lock,
-  Ticket,
+  Sparkles,
 } from "lucide-react";
 import AdminArticleForm from "@/components/AdminArticleForm";
 
@@ -260,6 +260,13 @@ export default function AdminPage() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white text-gray-600 hover:bg-gray-100"
         >
           โค้ดส่วนลด
+        </a>
+        <a
+          href="/admin/tiktok"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white text-gray-600 hover:bg-gray-100"
+        >
+          <Sparkles size={16} />
+          TikTok Studio
         </a>
       </div>
 

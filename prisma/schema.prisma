@@ -43,8 +43,24 @@ model Article {
   author         String?   // ชื่อผู้เขียน (เฉพาะหมวดหนังสือ)
   categoryId     Int
   category       Category  @relation(fields: [categoryId], references: [id])
+  tiktokScripts  TikTokScript[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+// คอนเทนต์ TikTok ที่สร้างจาก Content Studio (บทพูด/แคปชั่น/แฮชแท็ก) สำหรับโพสต์เอง
+model TikTokScript {
+  id          Int      @id @default(autoincrement())
+  articleId   Int?     // อ้างอิง Article ถ้า gen จากบทความ (optional — กรอกสินค้าเองก็ได้)
+  article     Article? @relation(fields: [articleId], references: [id])
+  productName String   // ชื่อสินค้าที่ใช้ตอน gen
+  script      String   // บทพูด/สคริปต์วิดีโอ
+  caption     String   // แคปชั่น
+  hashtags    String   // JSON array ของแฮชแท็ก (ตามแพทเทิร์น pros/cons)
+  model       String   @default("gpt-4o-mini")
+  status      String   @default("draft") // draft | copied | posted
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // API Key สำหรับ n8n
